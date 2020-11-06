@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar {
+    clear: both;
+
+    margin: 0;
+    padding: 0;
+}
+
+.main-menu {
+    display: block;
+}
+
+.main-menu button {
+    border: none;
+    border-radius: 0%;
+    height: 40px;
+    margin-right: 1px;
+    outline: none;
+    width: 40px;
+}
+
+.main-menu button:hover {
+    border: 1px solid black;
+}
+
+#notification-button, #notification-button:active {
+    border: none;
+    border-radius: 100%;
+    float: right;
+    outline: none;
+}
+
+.create-new-user-form input {
+    display: block;
+}

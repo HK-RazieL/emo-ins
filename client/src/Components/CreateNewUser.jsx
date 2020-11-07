@@ -28,11 +28,10 @@ class CreateNewUser extends Component {
         return (
             <div className="create-new-user-form">
                 <form action="/create-new-user" onSubmit={this.createNewUser}>
-                    <input type="text" placeholder="First Name" autoComplete="off" onChange={this.handleChange} name="fname" required />
-                    <input type="text" placeholder="Last Name" autoComplete="off" onChange={this.handleChange} name="lname" required />
-                    <input type="text" placeholder="EGN" autoComplete="off" onChange={this.handleChange} name="egn" required />
-                    <input type="text" placeholder="Phone" autoComplete="off" onChange={this.handleChange} name="phone" required />
-                    <input type="text" placeholder="Address" autoComplete="off" onChange={this.handleChange} name="address" required />
+                    <input type="text" placeholder="Name" autoComplete="off" onChange={this.handleChange} name="name" required />
+                    <input type="text" placeholder="EGN" autoComplete="off" onChange={this.handleChange} name="egn" />
+                    <input type="text" placeholder="Phone" autoComplete="off" onChange={this.handleChange} name="phone" />
+                    <input type="text" placeholder="Address" autoComplete="off" onChange={this.handleChange} name="address" />
                     <textarea placeholder="Comments" onChange={this.handleChange} name="comments" />
                     <input type="submit" value="Create" />
                 </form>

@@ -41,3 +41,8 @@ body {
 .create-new-user-form input {
     display: block;
 }
+
+.search-user {
+    display: grid;
+    grid-template-columns: 1fr;
+}

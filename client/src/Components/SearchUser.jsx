@@ -42,9 +42,12 @@ class SearchUser extends Component {
     render() {
         return (
             <div>
-                <form action="/search-user" onSubmit={this.findUser} >
-                    <input type="text" onChange={this.handleChange} name="fname" />
-                    <input type="text" onChange={this.handleChange} name="lname" />
+                <form action="/search-user" onSubmit={this.findUser} className="search-user">
+                    <input type="text" onChange={this.handleChange} name="name" placeholder="Name" />
+                    <input type="text" onChange={this.handleChange} name="phone" placeholder="Phone" />
+                    <input type="text" onChange={this.handleChange} name="car-reg-number" placeholder="Car Registration Number" />
+                    <input type="text" onChange={this.handleChange} name="vin" placeholder="VIN" />
+                    <input type="text" onChange={this.handleChange} name="doc-number" placeholder="Document Number" />
                     <input type="submit" value="Search" />
                 </form>
                 <div>

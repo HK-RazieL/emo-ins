@@ -27,7 +27,7 @@ class UserPanel extends Component {
 
     render() {
         return (
-            <div>
+            <div classNa>
                 <input placeholder={this.state?.data.name} />
                 <input value={this.state?.data.egn || ""} />
                 <input value={this.state?.data.phone || ""} />

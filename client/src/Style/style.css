@@ -38,11 +38,25 @@ body {
     outline: none;
 }
 
-.create-new-user-form input {
-    display: block;
+.create-new-user {
+    display: grid;
+    grid-template-columns: 1fr;
 }
 
 .search-user {
     display: grid;
     grid-template-columns: 1fr;
+}
+
+.filtered-users-list a,
+.filtered-users-list h4 {
+    display: grid;
+    grid-template-columns: 1fr 4fr 4fr 4fr;
+    padding: 5px;
+    margin: 5px;
+    text-decoration: none;
+}
+
+.filtered-users-list a:hover {
+    border: 1px solid black;
 }

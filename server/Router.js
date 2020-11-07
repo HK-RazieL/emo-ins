@@ -38,8 +38,7 @@ router.post("/create-new-user", jsonParser, (req, res) => {
 
 router.post("/search-user", jsonParser, (req, res) => {
     User.find({
-        fname: req.body.fname,
-        lname: req.body.lname
+        name: req.body.name,
     }, (err, users) => {
         if (err) return console.error(err);
         res.send(users);

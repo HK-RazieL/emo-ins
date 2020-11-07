@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 class SearchUser extends Component {
     state = {}
@@ -42,6 +43,7 @@ class SearchUser extends Component {
     render() {
         return (
             <div>
+                <h2>Search for User</h2>
                 <form action="/search-user" onSubmit={this.findUser} className="search-user">
                     <input type="text" onChange={this.handleChange} name="name" placeholder="Name" />
                     <input type="text" onChange={this.handleChange} name="phone" placeholder="Phone" />
@@ -51,9 +53,22 @@ class SearchUser extends Component {
                     <input type="submit" value="Search" />
                 </form>
                 <div>
-                    <form action={`/users/${this.state.selected}`}>
-                        {this.state.data?.map((user) => {
-                            return <a type="button" key={user._id} href={`/users/${user._id}`} name={user._id}>{user.fname + " " + user.lname}</a>
+                    <form action={`/users/${this.state.selected}`} className="filtered-users-list">
+                        {this.state.data?.length && (<h4>
+                            <div>#</div>
+                            <div>Name</div>
+                            <div>EGN</div>
+                            <div>Phone</div>
+                        </h4>)}
+                        {this.state.data?.map((user, index) => {
+                            return (
+                                <Link to={`/users/${user._id}`} key={index} id={user._id} className="filtered-user">
+                                    <div onClick={this.openUser}>{index + 1}</div>
+                                    <div>{user.name}</div>
+                                    <div>{user.egn}</div>
+                                    <div>{user.phone}</div>
+                                </Link>
+                            )
                         })}
                     </form>
                 </div>

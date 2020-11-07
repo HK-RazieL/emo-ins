@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import CreateNewUser from './CreateNewUser';
 import SearchUser from './SearchUser';
 import UserPanel from "./UserPanel";
+import Notifications from "./Notifications"
 
 
 class Nav extends Component {

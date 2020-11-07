@@ -26,13 +26,13 @@ class CreateNewUser extends Component {
 
     render() {
         return (
-            <div className="create-new-user-form">
-                <form action="/create-new-user" onSubmit={this.createNewUser}>
+            <div>
+                <h2>Create New User</h2>
+                <form action="/create-new-user" onSubmit={this.createNewUser} className="create-new-user">
                     <input type="text" placeholder="Name" autoComplete="off" onChange={this.handleChange} name="name" required />
                     <input type="text" placeholder="EGN" autoComplete="off" onChange={this.handleChange} name="egn" />
                     <input type="text" placeholder="Phone" autoComplete="off" onChange={this.handleChange} name="phone" />
                     <input type="text" placeholder="Address" autoComplete="off" onChange={this.handleChange} name="address" />
-                    <textarea placeholder="Comments" onChange={this.handleChange} name="comments" />
                     <input type="submit" value="Create" />
                 </form>
             </div>

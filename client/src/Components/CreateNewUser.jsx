@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class CreateNewUser extends Component {
     state = {
-        date: `${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`
+        account_creation_date: new Date().setUTCHours(3)
     }
 
     createNewUser = (event) => {
@@ -13,7 +13,7 @@ class CreateNewUser extends Component {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(this.state.data)
+            body: JSON.stringify(this.state)
         });
     }
 
@@ -28,10 +28,11 @@ class CreateNewUser extends Component {
         return (
             <div className="create-new-user-form">
                 <form action="/create-new-user" onSubmit={this.createNewUser}>
-                    <input type="text" placeholder="Full Name" autoComplete="foo" onChange={this.handleChange} name="fullName" />
-                    <input type="text" placeholder="EGN" autoComplete="foo" onChange={this.handleChange} name="egn" />
-                    <input type="text" placeholder="Phone" autoComplete="foo" onChange={this.handleChange} name="phone" />
-                    <input type="text" placeholder="Address" autoComplete="foo" onChange={this.handleChange} name="address" />
+                    <input type="text" placeholder="Full Name" autoComplete="off" onChange={this.handleChange} name="name" required />
+                    <input type="text" placeholder="EGN" autoComplete="off" onChange={this.handleChange} name="egn" required />
+                    <input type="text" placeholder="Phone" autoComplete="off" onChange={this.handleChange} name="phone" required />
+                    <input type="text" placeholder="Address" autoComplete="off" onChange={this.handleChange} name="address" required />
+                    <textarea placeholder="Comments" onChange={this.handleChange} name="comments" />
                     <input type="submit" value="Create" />
                 </form>
             </div>

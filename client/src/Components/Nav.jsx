@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import CreateNewUser from './CreateNewUser';
+import SearchUser from './SearchUser';
+import UserPanel from "./UserPanel";
 
 
 class Nav extends Component {
@@ -24,6 +26,12 @@ class Nav extends Component {
                 <Switch>
                     <Route exact path="/create-new-user">
                         <CreateNewUser />
+                    </Route>
+                    <Route exact path="/search-user">
+                        <SearchUser />
+                    </Route>
+                    <Route exact path="/users/:id">
+                        <UserPanel />
                     </Route>
                 </Switch>
             </Router>

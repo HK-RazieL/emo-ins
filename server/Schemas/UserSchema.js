@@ -1,8 +1,21 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-    name: String,
-    egn: Number,
+    fname: {
+        type: String,
+        required: true,
+        trum: true
+    },
+    lname: {
+        type: String,
+        required: true,
+        trum: true
+    },
+    egn: {
+        type: Number,
+        unique: true,
+        required: true
+    },
     phone: Number,
     address: String,
     comments: String,

@@ -1,17 +1,11 @@
 import React, { Component } from 'react';
 import Modal from "react-modal";
-/*
-    nomer na polica
-    registracionnen nomer
 
-    policite dati i padeji
-    kolko sa plateni
-    kakvi sa
-*/
 Modal.setAppElement("#root")
 class UserPanel extends Component {
     state = {
-        addCarModal: false
+        addCarModal: false,
+        addCarPaymentModal: false
     }
 
     componentDidMount = () => {
@@ -35,7 +29,15 @@ class UserPanel extends Component {
         this.setState({ addCarModal: false });
     }
 
-    handleChange = (event) => {
+    openAddCarPayment = () => {
+        this.setState({ addCarPaymentModal: true});
+    }
+
+    closeAddCarPayment = () => {
+        this.setState({ addCarPaymentModal: false });
+    }
+
+    handleAddCarChange = (event) => {
         this.setState({
             ...this.state,
             addNewCar: {
@@ -43,6 +45,19 @@ class UserPanel extends Component {
                 [event.target.name]: event.target.value
             }
         })
+    } 
+
+    handleAddCarPaymentChange = (event) => {
+        console.log(event.target);
+        this.setState({
+            ...this.state,
+            addNewCarPayment: {
+                ...this.state.addNewCarPayment,
+                [event.target.name]: event.target.value
+            }
+        }, () => {
+            console.log(this.state)
+        });
     } 
 
     addCar = (event) => {
@@ -71,7 +86,59 @@ class UserPanel extends Component {
         var selectedCar = this.state.cars.filter((el) => {
             return el.registration_number === event.target.value
         })
-        return <div>{selectedCar.payments}</div>
+        console.log(selectedCar[0].payments)
+        return (<div>{selectedCar[0].payments.map((el) => {
+            return el
+        })}</div>)
+    }
+
+    addCarPayment = () => {
+        event.preventDefault();
+        event.stopPropagation();
+        let startingDate = this.state.newStartDate;
+        let date = new Date(`${startingDate.slice(0, 3)}-${startingDate.slice(5, 6)}-${startingDate.slice(8, 9)}`);
+        fetch(`/users/${this.state._id}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ addingNewCarPayment: {
+                paymentId: this.state.payments.length++,
+                paymentType: this.state.newInsuranceType,
+                due_dates: {
+                    dates: [],
+                    paid: []
+                }
+            }})
+        }).then((res) => {
+            return res.json();
+        }).then((json) => {
+            this.setState({
+                ...this.state,
+                cars: [...this.state.cars, json]
+            }, () => {
+                window.location.reload();
+            });
+        });
+        this.closeAddCarPayment();
+    }
+
+    addNewInsuranceType = (event) => {
+        this.setState({
+            newInsuranceType: event.target.getAttribute("name")
+        });
+    }
+
+    addNewNumberOfPayments = (event) => {
+        this.setState({
+            newNumberOfPayments: event.target.getAttribute("name")
+        });
+    }
+
+    addNewStartDate = (event) => {
+        this.setState({
+            newStartDate: event.target.getAttribute("name")
+        });
     }
 
     render() {
@@ -101,14 +168,47 @@ class UserPanel extends Component {
                             <h3>Add a new car</h3>
                             <div>
                                 <div>Registration:</div>
-                                <input type="text" name="registration_number" onChange={this.handleChange} />
+                                <input type="text" name="registration_number" onChange={this.handleAddCarChange} />
                             </div>
                             <div>
                                 <div>VIN:</div>
-                                <input type="text" name="vin" onChange={this.handleChange} required />
+                                <input type="text" name="vin" onChange={this.handleAddCarChange} />
                             </div>
                             <input type="submit" value="Add" onClick={this.addCar}/>
                             <button onClick={this.closeAddCar}>X</button>
+                        </form>
+                    </Modal>
+                    
+                    <div>Add Payment</div>
+                    <button onClick={this.openAddCarPayment}>Add</button>
+                    <Modal
+                        isOpen={this.state.addCarPaymentModal}
+                        className="modal"
+                    >   
+                        <form action={`/user/${this.state._id}`} method="PUT">
+                            <h3>Add a new car payment</h3>
+                            <div>
+                                <select name="insurance-type" onClick={this.addNewInsuranceType}>
+                                    <option value="">Insurance Type</option>
+                                    <option value="autocasco">Autocasco</option>
+                                    <option value="tpli">TPLI</option>
+                                </select>
+                            </div>
+                            <div>
+                                <select name="payments" onClick={this.addNewNumberOfPayments}>
+                                    <option value="">Number of payments</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <input type="text" onChange={this.handleAddStartDate} placeholder="dd-mm-yyyy" />
+                            </div>
+                            <input type="submit" value="Add" onClick={this.addCarPayment}/>
+                            <button onClick={this.closeAddCarPayment}>X</button>
                         </form>
                     </Modal>
                 </div>

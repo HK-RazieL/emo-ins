@@ -21,14 +21,13 @@ class CreateNewUser extends Component {
                 ...this.state,
                 requestStatus: json
             }, () => {
-                console.log(this.state)
+                if(this.state.requestStatus <= 300) {
+                    document.querySelectorAll("input").forEach((el) => {
+                        el.value = "";
+                    })
+                };
             })
         });
-        if(this.state.requestStatus <= 300) {
-            document.querySelectorAll("input").forEach((el) => {
-                el.value = "";
-            })
-        };
     }
 
     handleChange = (event) => {

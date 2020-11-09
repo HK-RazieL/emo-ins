@@ -60,20 +60,18 @@ class UserPanel extends Component {
             this.setState({
                 ...this.state,
                 cars: [...this.state.cars, json]
+            }, () => {
+                window.location.reload();
             });
         });
         this.closeAddCar();
     }
 
-    selectCar = (car) => {
-        console.log(this.state)
-    }
-
-    componentDidUpdate = (prevProps, prevState) => {
-        if (prevState.cars?.length !== this.state.cars?.length) {
-            console.log(prevState)
-            console.log(this.state)
-        }
+    selectCar = (event) => {
+        var selectedCar = this.state.cars.filter((el) => {
+            return el.registration_number === event.target.value
+        })
+        return <div>{selectedCar.payments}</div>
     }
 
     render() {
@@ -83,12 +81,13 @@ class UserPanel extends Component {
                 <div>Phone: {this.state.phone}</div>
                 <div>EGN: {this.state.egn}</div>
                 <div>Address: {this.state.address}</div>
-                <div>Created: {this.state.account_creation_date?.slice(0,10)}</div>
+                <div>Created: {this.state.account_creation_date?.slice(0, 10)}</div>
                 <div>
-                    <select>
+                    <select onChange={this.selectCar}>
+                            <option>Select Car</option>
                             {this.state.cars?.map((car, i) => {
                                 return (
-                                    <option key={this.state.cars[i]._id} onClick={this.selectCar}>{car.registration_number}</option>
+                                    <option key={this.state.cars[i]?._id}>{car.registration_number}</option>
                                 )
                             })}
                     </select>

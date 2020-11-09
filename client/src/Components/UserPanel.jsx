@@ -45,20 +45,7 @@ class UserPanel extends Component {
                 [event.target.name]: event.target.value
             }
         })
-    } 
-
-    handleAddCarPaymentChange = (event) => {
-        console.log(event.target);
-        this.setState({
-            ...this.state,
-            addNewCarPayment: {
-                ...this.state.addNewCarPayment,
-                [event.target.name]: event.target.value
-            }
-        }, () => {
-            console.log(this.state)
-        });
-    } 
+    }
 
     addCar = (event) => {
         event.preventDefault();
@@ -96,48 +83,49 @@ class UserPanel extends Component {
         event.preventDefault();
         event.stopPropagation();
         let startingDate = this.state.newStartDate;
-        let date = new Date(`${startingDate.slice(0, 3)}-${startingDate.slice(5, 6)}-${startingDate.slice(8, 9)}`);
-        fetch(`/users/${this.state._id}`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ addingNewCarPayment: {
-                paymentId: this.state.payments.length++,
-                paymentType: this.state.newInsuranceType,
-                due_dates: {
-                    dates: [],
-                    paid: []
-                }
-            }})
-        }).then((res) => {
-            return res.json();
-        }).then((json) => {
-            this.setState({
-                ...this.state,
-                cars: [...this.state.cars, json]
-            }, () => {
-                window.location.reload();
-            });
-        });
-        this.closeAddCarPayment();
+        let date = new Date(`${startingDate.slice(6, 10)}-${startingDate.slice(3, 5)}-${startingDate.slice(0, 2)}`);
+        console.log(date)
+        // fetch(`/users/${this.state._id}`, {
+        //     method: "PUT",
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({ addingNewCarPayment: {
+        //         paymentId: this.state.payments.length++ || 0,
+        //         paymentType: this.state.newInsuranceType,
+        //         due_dates: {
+        //             dates: [],
+        //             paid: []
+        //         }
+        //     }})
+        // }).then((res) => {
+        //     return res.json();
+        // }).then((json) => {
+        //     this.setState({
+        //         ...this.state,
+        //         cars: [...this.state.cars, json]
+        //     }, () => {
+        //         window.location.reload();
+        //     });
+        // });
+        // this.closeAddCarPayment();
     }
 
     addNewInsuranceType = (event) => {
         this.setState({
-            newInsuranceType: event.target.getAttribute("name")
+            newInsuranceType: event.target.value
         });
     }
 
     addNewNumberOfPayments = (event) => {
         this.setState({
-            newNumberOfPayments: event.target.getAttribute("name")
+            newNumberOfPayments: event.target.value
         });
     }
 
     addNewStartDate = (event) => {
         this.setState({
-            newStartDate: event.target.getAttribute("name")
+            newStartDate: event.target.value
         });
     }
 
@@ -205,7 +193,7 @@ class UserPanel extends Component {
                                 </select>
                             </div>
                             <div>
-                                <input type="text" onChange={this.handleAddStartDate} placeholder="dd-mm-yyyy" />
+                                <input type="text" onChange={this.addNewStartDate} placeholder="dd-mm-yyyy" />
                             </div>
                             <input type="submit" value="Add" onClick={this.addCarPayment}/>
                             <button onClick={this.closeAddCarPayment}>X</button>

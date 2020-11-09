@@ -60,3 +60,17 @@ body {
 .filtered-users-list a:hover {
     border: 1px solid black;
 }
+
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -100px;
+    width: 400px;
+    height: 50px;
+    text-align: center;
+    /* padding: 100px; */
+    outline: none;
+
+}

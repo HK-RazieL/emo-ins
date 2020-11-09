@@ -62,7 +62,7 @@ class SearchUser extends Component {
                         </h4>)}
                         {this.state.data?.map((user, index) => {
                             return (
-                                <Link to={`/users/${user._id}`} key={index} id={user._id} className="filtered-user">
+                                <Link to={{ pathname: `/users/${user._id}`, state: { id: user._id}}} key={index} id={user._id} className="filtered-user">
                                     <div onClick={this.openUser}>{index + 1}</div>
                                     <div>{user.name}</div>
                                     <div>{user.egn}</div>

@@ -3,8 +3,6 @@ import {BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import CreateNewUser from './CreateNewUser';
 import SearchUser from './SearchUser';
 import UserPanel from "./UserPanel";
-import Notifications from "./Notifications"
-
 
 class Nav extends Component {
     render() {
@@ -25,20 +23,13 @@ class Nav extends Component {
                     </div>
                 </div>
                 <Switch>
-                    <Route exact path="/create-new-user">
-                        <CreateNewUser />
-                    </Route>
-                    <Route exact path="/search-user">
-                        <SearchUser />
-                    </Route>
-                    <Route exact path="/users/:id">
-                        <UserPanel />
-                    </Route>
+                    <Route exact path="/create-new-user" component={CreateNewUser} />
+                    <Route exact path="/search-user" component={SearchUser} />
+                    <Route exact path="/users/:id" component={UserPanel} />
                 </Switch>
             </Router>
         );
     }
 };
-
 
 export default Nav;

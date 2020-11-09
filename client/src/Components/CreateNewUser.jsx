@@ -14,7 +14,21 @@ class CreateNewUser extends Component {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(this.state)
+        }).then((res) => {
+            return res.status
+        }).then((json) => {
+            this.setState({
+                ...this.state,
+                requestStatus: json
+            }, () => {
+                console.log(this.state)
+            })
         });
+        if(this.state.requestStatus <= 300) {
+            document.querySelectorAll("input").forEach((el) => {
+                el.value = "";
+            })
+        };
     }
 
     handleChange = (event) => {
@@ -35,6 +49,8 @@ class CreateNewUser extends Component {
                     <input type="text" placeholder="Address" autoComplete="off" onChange={this.handleChange} name="address" />
                     <input type="submit" value="Create" />
                 </form>
+                <div className="text-justify success-message">{this.state.requestStatus < 300 ? "Success!" : ""}</div>
+                <div className="text-justify error-message">{this.state.requestStatus > 300 ? "Failed request!" : ""}</div>
             </div>
         );
     }

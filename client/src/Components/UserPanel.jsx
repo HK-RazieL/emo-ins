@@ -5,7 +5,8 @@ Modal.setAppElement("#root")
 class UserPanel extends Component {
     state = {
         addCarModal: false,
-        addCarPaymentModal: false
+        addCarPaymentModal: false,
+        selectedCar: ""
     }
 
     componentDidMount = () => {
@@ -73,42 +74,52 @@ class UserPanel extends Component {
         var selectedCar = this.state.cars.filter((el) => {
             return el.registration_number === event.target.value
         })
-        console.log(selectedCar[0].payments)
-        return (<div>{selectedCar[0].payments.map((el) => {
-            return el
-        })}</div>)
+        this.setState({
+            ...this.state,
+            selectedCar: selectedCar[0]
+        });
     }
 
-    addCarPayment = () => {
+    addCarPayment = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        let startingDate = this.state.newStartDate;
-        let date = new Date(`${startingDate.slice(6, 10)}-${startingDate.slice(3, 5)}-${startingDate.slice(0, 2)}`);
-        console.log(date)
-        // fetch(`/users/${this.state._id}`, {
-        //     method: "PUT",
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({ addingNewCarPayment: {
-        //         paymentId: this.state.payments.length++ || 0,
-        //         paymentType: this.state.newInsuranceType,
-        //         due_dates: {
-        //             dates: [],
-        //             paid: []
-        //         }
-        //     }})
-        // }).then((res) => {
-        //     return res.json();
-        // }).then((json) => {
-        //     this.setState({
-        //         ...this.state,
-        //         cars: [...this.state.cars, json]
-        //     }, () => {
-        //         window.location.reload();
-        //     });
-        // });
-        // this.closeAddCarPayment();
+        let year = this.state.newStartDate.slice(6, 10);
+        let month = this.state.newStartDate.slice(3, 5);
+        let day = this.state.newStartDate.slice(0, 2);
+        var body = {
+            selectedCar: this.state.selectedCar.registration_number,
+            newPayment: {
+                paymentId: this.state.selectedCar.payments.length + 1,
+                paymentType: this.state.newInsuranceType,
+                due_dates: {
+                    dates: [],
+                    paid: []
+                }
+            }
+        }
+        for (let i = 0; i < this.state.newNumberOfPayments; i++) {
+            let newDate = new Date(year, month - 1, day);
+            newDate.setMonth(newDate.getMonth() + i * (12 / this.state.newNumberOfPayments));
+            body.newPayment.due_dates.dates.push(newDate);
+            body.newPayment.due_dates.paid.push(false);
+        }
+        fetch(`/users/${this.state._id}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        }).then((res) => {
+            return res.json();
+        }).then((json) => {
+            this.setState({
+                ...this.state,
+                cars: [...this.state.cars, json]
+            }, () => {
+                window.location.reload();
+            });
+        });
+        this.closeAddCarPayment();
     }
 
     addNewInsuranceType = (event) => {
@@ -129,6 +140,39 @@ class UserPanel extends Component {
         });
     }
 
+    makePayment = (event) => {
+        fetch(`/users/${this.state._id}`, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                makePayment: {
+                    index: event.target.parentElement.getAttribute("index"),
+                    selectedCar: this.state.selectedCar.registration_number,
+                    paymentId: event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("index")
+                }
+            })
+        }).then((res) => {
+            return res.json();
+        }).then((json) => {
+            this.setState({
+                ...this.state,
+                cars: [...this.state.cars, json]
+            }, () => {
+                // window.location.reload();
+            });
+        });
+    }
+
+    removePayment = () => {
+
+    }
+
+    saveComments = () => {
+        
+    }
+
     render() {
         return (
             <div className="user-panel-personal-data">
@@ -138,15 +182,18 @@ class UserPanel extends Component {
                 <div>Address: {this.state.address}</div>
                 <div>Created: {this.state.account_creation_date?.slice(0, 10)}</div>
                 <div>
+                    <textarea placeholder="Comments" cols="50" rows="10">{this.state.comments}</textarea>
+                </div>
+                <button onClick={this.saveComments}>Save Comments</button>
+                <div>
                     <select onChange={this.selectCar}>
                             <option>Select Car</option>
                             {this.state.cars?.map((car, i) => {
                                 return (
-                                    <option key={this.state.cars[i]?._id}>{car.registration_number}</option>
+                                    <option key={i}>{car.registration_number}</option>
                                 )
                             })}
                     </select>
-                    
                     <button onClick={this.openAddCar}>Add</button>
                     <Modal
                         isOpen={this.state.addCarModal}
@@ -167,8 +214,12 @@ class UserPanel extends Component {
                         </form>
                     </Modal>
                     
-                    <div>Add Payment</div>
-                    <button onClick={this.openAddCarPayment}>Add</button>
+                    {this.state.selectedCar ? ( 
+                        <>
+                            <div>Add Payment</div>
+                            <button onClick={this.openAddCarPayment}>Add</button>
+                        </>
+                    ) : ""}
                     <Modal
                         isOpen={this.state.addCarPaymentModal}
                         className="modal"
@@ -199,6 +250,37 @@ class UserPanel extends Component {
                             <button onClick={this.closeAddCarPayment}>X</button>
                         </form>
                     </Modal>
+                </div>
+                <div>
+                    {this.state.selectedCar?.payments?.map((el, i) => {
+                        return (
+                            <div key={el.paymentId}>
+                                <table className="payments" index={i + 1}>
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                {el.paymentType}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            {el.due_dates.dates?.map((a, i) => {
+                                                return <td key={i}>{a.toString().slice(0, 10)}</td>
+                                            })}
+                                        </tr>
+                                        <tr>
+                                            {el.due_dates.paid?.map((b, i) => {
+                                                return (
+                                                    <td key={i} index={i}>{b ? <button onClick={this.removePayment}>&#9989;</button> : <button onClick={this.makePayment}>&#10060;</button>}</td>
+                                                )
+                                            })}
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                    }).reverse()}
                 </div>
             </div>
         );

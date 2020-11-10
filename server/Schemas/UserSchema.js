@@ -18,11 +18,12 @@ const userSchema = new mongoose.Schema({
             required: true,
         },
         payments: [{
-            paymentId: String,
-            due_dates:  [{
+            paymentId: Number,
+            paymentType: String,
+            due_dates: {
                 dates: [String],
                 paid: [Boolean],
-            }]
+            }
         }]
     }]
 });

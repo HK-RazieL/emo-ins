@@ -72,5 +72,17 @@ body {
     text-align: center;
     /* padding: 100px; */
     outline: none;
+}
 
+.payments {
+    border: 1px solid black;
+    border-collapse: collapse;
+    margin: 20px auto;
+}
+
+.payments td {
+    border: 1px solid black;
+    text-align: center;
+    margin: 0;
+    padding: 5px;
 }

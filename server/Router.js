@@ -56,10 +56,15 @@ router.get("/users/:id", jsonParser, (req, res) => {
     });
 })
 
-router.put("/users/:id", jsonParser, (req, res) => {
-    
-
-
+router.patch("/users/:id", jsonParser, (req, res) => {
+    User.findByIdAndUpdate({
+        _id: req.body._id
+    }, {
+        $set:_.cloneDeep(req.body)
+    }, {useFindAndModify:false}, (err, user) => {
+        if (err) return console.error(err);
+        res.send(user);
+    });
 
 
     // User.findOne({

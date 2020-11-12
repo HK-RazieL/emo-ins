@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 class CreateNewUser extends Component {
     state = {
-        account_creation_date: new Date()
+        account_creation_date: new Date(),
+        comments: ""
     }
 
     createNewUser = (event) => {

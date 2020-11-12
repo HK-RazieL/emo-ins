@@ -33,6 +33,16 @@ class UserPanel extends Component {
         });
     }
 
+    handleComment = (event) => {
+        this.setState({
+            ...this.state,
+            user: {
+                ...this.state.user,
+                [event.target.name]: event.target.value
+            }
+        })
+    }
+
     addCar = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -89,7 +99,7 @@ class UserPanel extends Component {
         for (let i = 0; i < this.state.newInsurance.payments; i++) {
             let newDate = new Date(year, month - 1, day);
             newDate.setMonth(newDate.getMonth() + i * (12 / this.state.newInsurance.payments));
-            body.due_dates.dates.push(`${newDate.getDate()}-${newDate.getMonth()}-${newDate.getFullYear()}`);
+            body.due_dates.dates.push(`${("0" + String(newDate.getDate())).slice(-2)}-${("0" + String(newDate.getMonth() + 1)).slice(-2)}-${newDate.getFullYear()}`);
             body.due_dates.paid.push(false);
         }
         var car;
@@ -113,9 +123,21 @@ class UserPanel extends Component {
         })
     }
 
-    removePayment = () => {
-
+    saveUser = () => {
+        fetch(`/users/:${this.state.user._id}`, {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(this.state.user)
+        })
     }
+
+    makePayment = (event) => {
+        console.log(event.target)
+    }
+
+
 
     openAddCar = () => {
         this.setState({ addCarModal: true, addNewCar: {} });
@@ -141,8 +163,9 @@ class UserPanel extends Component {
                 <div>EGN: {this.state.user?.egn}</div>
                 <div>Address: {this.state.user?.address}</div>
                 <div>Created: {this.state.user?.account_creation_date?.slice(0, 10)}</div>
+                <button onClick={this.saveUser}>SAVE</button>
                 <div>
-                    <textarea placeholder="Comments" cols="50" rows="10">{this.state.user?.comments}</textarea>
+                    <textarea name="comments" onChange={this.handleComment} placeholder="Comments" cols="50" rows="10">{this.state.user?.comments}</textarea>
                 </div>
                 <div>
                     <select onChange={this.selectCar}>

@@ -37,8 +37,8 @@ class Nav extends Component {
                     <Route exact path="/search-user" component={SearchUser} />
                     <Route exact path="/users/:id" component={UserPanel} />
                 </Switch>
-            </Router>
             <Notifications />
+            </Router>
             </>
         );
     }

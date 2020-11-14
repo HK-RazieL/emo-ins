@@ -97,9 +97,9 @@ class UserPanel extends Component {
             }
         }
         for (let i = 0; i < this.state.newInsurance.payments; i++) {
-            let newDate = new Date(year, month, day);
+            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
             newDate.setMonth(newDate.getMonth() + i * (12 / this.state.newInsurance.payments));
-            body.due_dates.dates.push(`${("0" + String(newDate.getDate())).slice(-2)}-${("0" + String(newDate.getMonth() + 1)).slice(-2)}-${newDate.getFullYear()}`);
+            body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
         var car;
@@ -130,6 +130,8 @@ class UserPanel extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(this.state.user)
+        }).then(()=> {
+            window.location.reload();
         })
     }
 
@@ -262,7 +264,7 @@ class UserPanel extends Component {
                                     <tbody>
                                         <tr>
                                             {el.due_dates?.dates.map((a, i) => {
-                                                return <td key={i}>{a.toString().slice(0, 10)}</td>
+                                                return <td key={i}>{`${new Date(a).getDate()}-${(new Date(a).getMonth() + 1).toString().padStart(2,0)}-${new Date(a).getFullYear()}`}</td>
                                             })}
                                         </tr>
                                         <tr>

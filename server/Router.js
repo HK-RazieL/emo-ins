@@ -36,22 +36,25 @@ router.get("/notifications", (req, res) => {
                 name: "",
                 car: "",
                 date: "",
+                id: ""
             };
-            for (var cars of user.cars) {
-                if (!cars.payments) return;
-                for (var payment of cars.payments) {
+            for (var car of user.cars) {
+                if (!car.payments) return;
+                for (var payment of car.payments) {
                     var today = new Date();
                     var index = payment.due_dates.paid.indexOf(false)
                     var date = payment.due_dates.dates[index];
-                    console.log(date)
-                    var year = date.slice(6, 10);
-                    var month = date.slice(3, 5);
-                    var day = date.slice(0, 2);
-                    console.log(user.name, index, date);
+                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24) <= 93) {
+                        notification.name = user.name;
+                        notification.car = car.registration_number;
+                        notification.date = date;
+                        notification.id = user._id;
+                        dueDates.push(notification);
+                    }
                 }
             }
         }
-        res.send(result)
+        res.send(dueDates)
     })
 });
 
@@ -82,7 +85,6 @@ router.get("/users/:id", jsonParser, (req, res) => {
         _id: req.params.id
     }, (err, user) => {
         if (err) return console.error(err);
-        console.log(user)
         res.send(user);
     });
 })

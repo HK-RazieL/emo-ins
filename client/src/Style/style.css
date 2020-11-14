@@ -39,10 +39,40 @@ body {
 }
 
 #notifications {
+    background: gray;
+    color: white;
     display: none;
+    padding: 5px 10px;
     position: absolute;
-    right: 1rem;
-    top: 2rem;
+    right: 40px;
+    top: 30px;
+}
+
+#notifications>a {
+    color: white;
+    display: grid;
+    padding: 5px;
+    text-decoration: none;
+}
+
+#notifications>a:hover {
+    border: 1px solid black;
+    display: grid;
+    padding: 4px;
+}
+
+#unread {
+    background: red;
+    border-radius: 50%;
+    color: white;
+    height: 20px;
+    position: absolute;
+    right: 30px;
+    text-align: center;
+    top: 20px;
+    vertical-align: middle;
+    width: 20px;
+    z-index: 1;
 }
 
 .create-new-user {

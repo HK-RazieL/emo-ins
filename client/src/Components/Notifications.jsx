@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
 class Notifications extends Component {
     state = {
@@ -21,21 +22,24 @@ class Notifications extends Component {
    }
     render() {
         return (
-            <div id="notifications">
-                {this.state.users.map((el,i) => {
-                    return (<div key={i}>
-                        <span>
-                            {el.name}
-                        </span>
-                        <span>
-                            {el.car}
-                        </span>
-                        <span>
-                            {el.date}
-                        </span>
-                    </div>)
-                })}
-            </div>
+            <>
+                {this.state.users ? <div id="unread">{this.state.users.length}</div> : null}
+                <div id="notifications">
+                    {this.state.users.map((el,i) => {
+                        return (<Link to={{ pathname: `/users/${el.id}`, state: { id: el.id}}} key={i}>
+                            <div>
+                                {el.name}
+                            </div>
+                            <div>
+                                {el.car}
+                            </div>
+                            <div>
+                                {`${new Date(el.date).getDate()}-${(new Date(el.date).getMonth() + 1).toString().padStart(2,0)}-${new Date(el.date).getFullYear()}`}
+                            </div>
+                        </Link>)
+                    })}
+                </div>
+            </>
         );
     }
 }

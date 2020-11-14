@@ -89,8 +89,8 @@ class UserPanel extends Component {
         let month = this.state.newInsurance.startingDate.slice(3, 5);
         let day = this.state.newInsurance.startingDate.slice(0, 2);
         var body = {
-            paymentId: Math.random(),
-            paymentType: this.state.newInsurance.paymentType,
+            paymentType: this.state.newInsurance.insuranceType,
+            paymentId: this.state.selectedCar.payments.length + 1,
             due_dates: {
                 dates: [],
                 paid: []
@@ -134,10 +134,31 @@ class UserPanel extends Component {
     }
 
     makePayment = (event) => {
-        console.log(event.target)
+        var paidIndex = event.target.parentElement.getAttribute("index");
+        var payments = this.state.selectedCar.payments;
+        var payment = payments.filter(el => {
+            return el._id === event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment");
+        });
+        payment[0].due_dates.paid[paidIndex] = !payment[0].due_dates.paid[paidIndex];
+        console.log(payment[0].due_dates.paid[paidIndex])
+        console.log(!payment[0].due_dates.paid[paidIndex])
+        payments[payment[0].paymentId] = payment;
+        var car = {
+            ...this.state.selectedCar,
+            payments: [
+                ...payments
+            ]
+        }
+
+
+        this.setState({
+            ...this.state,
+            selectedCar: car
+        }, () => {
+            console.log(this.state.selectedCar)
+            this.forceUpdate();
+        })
     }
-
-
 
     openAddCar = () => {
         this.setState({ addCarModal: true, addNewCar: {} });
@@ -234,10 +255,10 @@ class UserPanel extends Component {
                     </Modal>
                 </div>
                 <div>
-                    {this.state.selectedCar?.payments?.map((el, i) => {
+                    {this.state.selectedCar.payments?.map((el, i) => {
                         return (
-                            <div key={el.paymentId}>
-                                <table className="payments" index={i + 1}>
+                            <div key={el._id}>
+                                <table className="payments" index={i + 1} payment={el._id}>
                                     <thead>
                                         <tr>
                                             <th>
@@ -254,7 +275,7 @@ class UserPanel extends Component {
                                         <tr>
                                             {el.due_dates.paid?.map((b, i) => {
                                                 return (
-                                                    <td key={i} index={i}>{b ? <button onClick={this.removePayment}>&#9989;</button> : <button onClick={this.makePayment}>&#10060;</button>}</td>
+                                                    <td key={i} index={i}>{b ? <button onClick={this.makePayment}>&#9989;</button> : <button onClick={this.makePayment}>&#10060;</button>}</td>
                                                 )
                                             })}
                                         </tr>

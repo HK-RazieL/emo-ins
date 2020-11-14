@@ -38,6 +38,13 @@ body {
     outline: none;
 }
 
+#notifications {
+    display: none;
+    position: absolute;
+    right: 1rem;
+    top: 2rem;
+}
+
 .create-new-user {
     display: grid;
     grid-template-columns: 1fr;

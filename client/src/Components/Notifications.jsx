@@ -16,19 +16,22 @@ class Notifications extends Component {
             this.setState({
                 ...this.state,
                 users: [...json]
-            })
+            });
         });
    }
     render() {
         return (
-            <div>
-                {this.state.users.map(el => {
-                    return (<div>
+            <div id="notifications">
+                {this.state.users.map((el,i) => {
+                    return (<div key={i}>
                         <span>
                             {el.name}
                         </span>
                         <span>
-                            {el.name}
+                            {el.car}
+                        </span>
+                        <span>
+                            {el.date}
                         </span>
                     </div>)
                 })}

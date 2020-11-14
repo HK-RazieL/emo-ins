@@ -7,10 +7,16 @@ import Notifications from "./Notifications";
 
 class Nav extends Component {
     showNotifications = () => {
-        return <Notifications />
+        var notifications = document.querySelector("#notifications");
+        if (notifications.style.display === "none") {
+            notifications.style.display = "block"
+        } else {
+            notifications.style.display = "none"
+        }
     }
     render() {
         return (
+            <>
             <Router>
                 <div className="nav-bar">
                     <div className="main-menu">
@@ -27,12 +33,13 @@ class Nav extends Component {
                     </div>
                 </div>
                 <Switch>
-                    <Route exact path="/notifications" component={Notifications} />
                     <Route exact path="/create-new-user" component={CreateNewUser} />
                     <Route exact path="/search-user" component={SearchUser} />
                     <Route exact path="/users/:id" component={UserPanel} />
                 </Switch>
             </Router>
+            <Notifications />
+            </>
         );
     }
 };

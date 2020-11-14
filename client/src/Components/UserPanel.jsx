@@ -97,7 +97,7 @@ class UserPanel extends Component {
             }
         }
         for (let i = 0; i < this.state.newInsurance.payments; i++) {
-            let newDate = new Date(year, month - 1, day);
+            let newDate = new Date(year, month, day);
             newDate.setMonth(newDate.getMonth() + i * (12 / this.state.newInsurance.payments));
             body.due_dates.dates.push(`${("0" + String(newDate.getDate())).slice(-2)}-${("0" + String(newDate.getMonth() + 1)).slice(-2)}-${newDate.getFullYear()}`);
             body.due_dates.paid.push(false);
@@ -137,25 +137,18 @@ class UserPanel extends Component {
         var paidIndex = event.target.parentElement.getAttribute("index");
         var payments = this.state.selectedCar.payments;
         var payment = payments.filter(el => {
-            return el._id === event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment");
+            return el.paymentId == event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment");
         });
         payment[0].due_dates.paid[paidIndex] = !payment[0].due_dates.paid[paidIndex];
-        console.log(payment[0].due_dates.paid[paidIndex])
-        console.log(!payment[0].due_dates.paid[paidIndex])
-        payments[payment[0].paymentId] = payment;
+        payments[payment[0].paymentId - 1] = payment[0];
         var car = {
             ...this.state.selectedCar,
-            payments: [
-                ...payments
-            ]
+            payments: [...payments]
         }
-
-
         this.setState({
             ...this.state,
             selectedCar: car
         }, () => {
-            console.log(this.state.selectedCar)
             this.forceUpdate();
         })
     }
@@ -255,10 +248,10 @@ class UserPanel extends Component {
                     </Modal>
                 </div>
                 <div>
-                    {this.state.selectedCar.payments?.map((el, i) => {
+                    {this.state.selectedCar?.payments?.map((el, i) => {
                         return (
-                            <div key={el._id}>
-                                <table className="payments" index={i + 1} payment={el._id}>
+                            <div key={i}>
+                                <table className="payments" index={i + 1} payment={el.paymentId}>
                                     <thead>
                                         <tr>
                                             <th>
@@ -268,12 +261,12 @@ class UserPanel extends Component {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            {el.due_dates.dates?.map((a, i) => {
+                                            {el.due_dates?.dates.map((a, i) => {
                                                 return <td key={i}>{a.toString().slice(0, 10)}</td>
                                             })}
                                         </tr>
                                         <tr>
-                                            {el.due_dates.paid?.map((b, i) => {
+                                            {el.due_dates?.paid.map((b, i) => {
                                                 return (
                                                     <td key={i} index={i}>{b ? <button onClick={this.makePayment}>&#9989;</button> : <button onClick={this.makePayment}>&#10060;</button>}</td>
                                                 )

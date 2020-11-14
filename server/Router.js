@@ -39,13 +39,18 @@ router.get("/notifications", (req, res) => {
             };
             for (var cars of user.cars) {
                 if (!cars.payments) return;
-                for (var payments of cars.payments) {
+                for (var payment of cars.payments) {
                     var today = new Date();
+                    var index = payment.due_dates.paid.indexOf(false)
+                    var date = payment.due_dates.dates[index];
+                    console.log(date)
+                    var year = date.slice(6, 10);
+                    var month = date.slice(3, 5);
+                    var day = date.slice(0, 2);
+                    console.log(user.name, index, date);
                 }
             }
-
         }
-
         res.send(result)
     })
 });

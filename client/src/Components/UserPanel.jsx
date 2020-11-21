@@ -152,8 +152,60 @@ class UserPanel extends Component {
             selectedCar: car
         }, () => {
             this.forceUpdate();
-        })
+        });
     }
+
+    handleEdit = (event) => {
+        this.setState({
+            ...this.state,
+            editedPayment: {
+                ...this.state.editedPayment,
+                [event.target.name]: event.target.value
+            }
+        });
+    }
+
+    editPayment = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        let year = this.state.editedPayment.startingDate.slice(6, 10);
+        let month = this.state.editedPayment.startingDate.slice(3, 5);
+        let day = this.state.editedPayment.startingDate.slice(0, 2);
+        var body = {
+            paymentType: this.state.editedPayment.insuranceType,
+            paymentId: this.state.editing - 1,
+            due_dates: {
+                dates: [],
+                paid: []
+            }
+        }
+        for (let i = 0; i < this.state.editedPayment.payments; i++) {
+            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
+            newDate.setMonth(newDate.getMonth() + i * (12 / this.state.editedPayment.payments));
+            body.due_dates.dates.push(newDate);
+            body.due_dates.paid.push(false);
+        }
+        var car;
+        this.state.user.cars.filter((el) => {
+            if (el.registration_number !== this.state.selectedCar.registration_number) {
+                return el;
+            } else {
+                car = el;
+                return false;
+            }
+        });
+        car.payments[this.state.editing - 1] =  body;
+        this.setState({
+            ...this.state,
+            user: {
+                ...this.state.user,
+                cars : [...this.state.user.cars]
+            }
+        }, () => {
+            this.closeEditCarPayment();
+        });
+    }
+        
 
     openAddCar = () => {
         this.setState({ addCarModal: true, addNewCar: {} });
@@ -169,6 +221,18 @@ class UserPanel extends Component {
 
     closeAddCarPayment = () => {
         this.setState({ addCarPaymentModal: false });
+    }
+
+    openEditCarPayment = (event) => {
+        this.setState({
+            ...this.state,
+            editing: event.target.getAttribute("payment"),
+            editCarPaymentModal: true
+        });
+    }
+
+    closeEditCarPayment = () => {
+        this.setState({ editCarPaymentModal: false });
     }
 
     render() {
@@ -198,7 +262,7 @@ class UserPanel extends Component {
                         className="modal"
                     >   
                         <form action={`/user/${this.state.user?._id}`} method="PUT">
-                            <h3>Add a new car</h3>
+                            <h3>Add new car</h3>
                             <div>
                                 <div>Registration:</div>
                                 <input type="text" name="registration_number" onChange={this.handleAddCarChange} />
@@ -207,8 +271,38 @@ class UserPanel extends Component {
                                 <div>VIN:</div>
                                 <input type="text" name="vin" onChange={this.handleAddCarChange} />
                             </div>
-                            <input type="submit" value="Add" onClick={this.addCar}/>
+                            <input type="submit" value="Edit" onClick={this.addCar}/>
                             <button onClick={this.closeAddCar}>X</button>
+                        </form>
+                    </Modal>
+                    <Modal
+                        isOpen={this.state.editCarPaymentModal}
+                        className="modal"
+                    >   
+                        <form action={`/user/${this.state.user?._id}`} method="PUT">
+                            <h3>Edit payment</h3>
+                            <div>
+                                <select name="insuranceType" onClick={this.handleEdit}>
+                                    <option value="">Insurance Type</option>
+                                    <option value="autocasco">Autocasco</option>
+                                    <option value="tpli">TPLI</option>
+                                </select>
+                            </div>
+                            <div>
+                                <select name="payments" onClick={this.handleEdit}>
+                                    <option value="">Number of payments</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <input type="text" onChange={this.handleEdit} placeholder="dd-mm-yyyy" name="startingDate" />
+                            </div>
+                            <input type="submit" value="Edit" onClick={this.editPayment}/>
+                            <button onClick={this.closeEditCarPayment}>X</button>
                         </form>
                     </Modal>
                     
@@ -258,6 +352,7 @@ class UserPanel extends Component {
                                         <tr>
                                             <th>
                                                 {el.paymentType}
+                                                <button onClick={this.openEditCarPayment} payment={el.paymentId}>Edit</button>
                                             </th>
                                         </tr>
                                     </thead>

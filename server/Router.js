@@ -44,7 +44,7 @@ router.get("/notifications", (req, res) => {
                     var today = new Date();
                     var index = payment.due_dates.paid.indexOf(false)
                     var date = payment.due_dates.dates[index];
-                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24) <= 7) {
+                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24) <= 93) {
                         notification.name = user.name;
                         notification.car = car.registration_number;
                         notification.date = date;
@@ -71,10 +71,8 @@ router.post("/create-new-user", jsonParser, (req, res) => {
     });
 });
 
-router.post("/search-user", jsonParser, (req, res) => {
-    User.find({
-        name: req.body.name,
-    }, (err, users) => {
+router.get("/search-user", jsonParser, (req, res) => {
+    User.find({}, (err, users) => {
         if (err) return console.error(err);
         res.send(users);
     });

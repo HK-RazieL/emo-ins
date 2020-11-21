@@ -168,12 +168,16 @@ class UserPanel extends Component {
     editPayment = (event) => {
         event.preventDefault();
         event.stopPropagation();
+        if (!window.confirm("Are you sure you want to edit this payment?")) {
+            this.closeEditCarPayment();
+            return;
+        }
         let year = this.state.editedPayment.startingDate.slice(6, 10);
         let month = this.state.editedPayment.startingDate.slice(3, 5);
         let day = this.state.editedPayment.startingDate.slice(0, 2);
         var body = {
             paymentType: this.state.editedPayment.insuranceType,
-            paymentId: this.state.editing - 1,
+            paymentId: this.state.editing,
             due_dates: {
                 dates: [],
                 paid: []
@@ -194,7 +198,7 @@ class UserPanel extends Component {
                 return false;
             }
         });
-        car.payments[this.state.editing - 1] =  body;
+        car.payments[this.state.editing] =  body;
         this.setState({
             ...this.state,
             user: {

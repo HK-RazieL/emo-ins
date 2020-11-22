@@ -6,6 +6,7 @@ class UserPanel extends Component {
     state = {
         addCarModal: false,
         addCarPaymentModal: false,
+        editCarPaymentModal: false,
         selectedCar: ""
     }
 
@@ -20,6 +21,23 @@ class UserPanel extends Component {
                 user: json[0]
             });
         });
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        var { id } = this.props.location.state;
+        if (prevState.user?._id !== id) {
+            fetch(`/users/${id}`, {
+                method: "GET",
+            }).then((res) => {
+                return res.json();
+            }).then((json) => {
+                this.setState({
+                    user: json[0],
+                    selectedCar: ""
+                });
+                document.querySelectorAll("select")[0].selectedIndex = 0;
+            });
+        }
     }
 
     handleAddCarChange = (event) => {
@@ -169,7 +187,10 @@ class UserPanel extends Component {
         event.preventDefault();
         event.stopPropagation();
         if (!window.confirm("Are you sure you want to edit this payment?")) {
-            this.closeEditCarPayment();
+            return;
+        }
+        if (!this.state.editedPayment?.startingDate || !this.state.editedPayment?.insuranceType || !this.state.editedPayment?.payments) {
+            alert("One or more fields are not filled!")
             return;
         }
         let year = this.state.editedPayment.startingDate.slice(6, 10);
@@ -201,6 +222,7 @@ class UserPanel extends Component {
         car.payments[this.state.editing] =  body;
         this.setState({
             ...this.state,
+            editedPayment: {},
             user: {
                 ...this.state.user,
                 cars : [...this.state.user.cars]
@@ -275,7 +297,7 @@ class UserPanel extends Component {
                                 <div>VIN:</div>
                                 <input type="text" name="vin" onChange={this.handleAddCarChange} />
                             </div>
-                            <input type="submit" value="Edit" onClick={this.addCar}/>
+                            <input type="submit" value="Add" onClick={this.addCar}/>
                             <button onClick={this.closeAddCar}>X</button>
                         </form>
                     </Modal>

@@ -16,7 +16,7 @@ class Notifications extends Component {
         }).then((json) => {
             this.setState({
                 ...this.state,
-                users: [...json]
+                users: json
             });
         });
    }
@@ -24,7 +24,7 @@ class Notifications extends Component {
         return (
             <>
                 {this.state.users ? <div id="unread">{this.state.users.length}</div> : null}
-                <div id="notifications">
+                <div id="notifications" style={{"display": "none"}}>
                     {this.state.users.map((el,i) => {
                         return (<Link to={{ pathname: `/users/${el.id}`, state: { id: el.id}}} key={i}>
                             <div>
@@ -32,6 +32,9 @@ class Notifications extends Component {
                             </div>
                             <div>
                                 {el.car}
+                            </div>
+                            <div>
+                                {el.payment}
                             </div>
                             <div>
                                 {`${new Date(el.date).getDate()}-${(new Date(el.date).getMonth() + 1).toString().padStart(2,0)}-${new Date(el.date).getFullYear()}`}

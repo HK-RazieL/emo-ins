@@ -32,24 +32,27 @@ router.get("/notifications", (req, res) => {
 
         for (var user of result) {
             if (!user.cars) return;
-            var notification = {
-                name: "",
-                car: "",
-                date: "",
-                id: ""
-            };
             for (var car of user.cars) {
                 if (!car.payments) return;
                 for (var payment of car.payments) {
+                    var notification = {
+                        name: "",
+                        car: "",
+                        payment: "",
+                        date: "",
+                        id: ""
+                    };
                     var today = new Date();
                     var index = payment.due_dates.paid.indexOf(false)
                     var date = payment.due_dates.dates[index];
                     if (Math.floor((date - today) / 1000 / 60 / 60 / 24) <= 93) {
                         notification.name = user.name;
                         notification.car = car.registration_number;
+                        notification.payment = payment.paymentType;
                         notification.date = date;
                         notification.id = user._id;
                         dueDates.push(notification);
+                        console.log(dueDates)
                     }
                 }
             }

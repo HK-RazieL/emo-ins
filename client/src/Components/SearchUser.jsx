@@ -29,7 +29,6 @@ class SearchUser extends Component {
             if (this.state.users && Object.entries(this.state.data).length !== 0) {
                 for (var obj of this.state.users) {
                     for (var key in this.state.data) {
-                        console.log(this.state.data)
                         if (new RegExp(this.escapeRegExp(this.state.data[key].toLowerCase())).test(obj[key].toLowerCase())) {
                             result.push(obj)
                         }

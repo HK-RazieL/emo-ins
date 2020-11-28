@@ -7,7 +7,6 @@ class UserPanel extends Component {
         addCarModal: false,
         addCarPaymentModal: false,
         editCarPaymentModal: false,
-        selectedCar: ""
     }
 
     componentDidMount = () => {
@@ -18,13 +17,17 @@ class UserPanel extends Component {
             return res.json();
         }).then((json) => {
             this.setState({
-                user: json[0]
+                user: json[0],
+            }, () => {
+                if (this.props.location.state.notificationCar) {
+                    this.selectedFromNotification();
+                }
             });
         });
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        var { id } = this.props.location.state;
+        let { id } = this.props.location.state;
         if (prevState.user?._id !== id) {
             fetch(`/users/${id}`, {
                 method: "GET",
@@ -33,13 +36,36 @@ class UserPanel extends Component {
             }).then((json) => {
                 this.setState({
                     user: json[0],
-                    selectedCar: ""
+                }, () => {
+                    if (this.props.location.state.notificationCar) {
+                        this.selectedFromNotification();
+                    } else {
+                        let select = document.querySelector("select");
+                        if (!select) return;
+                        select[0].selectedIndex = 0;
+                    }
                 });
-                let select = document.querySelectorAll("select");
-                if (!select) return;
-                select[0].selectedIndex = 0
             });
         }
+        if (prevProps.location.state.notificationCar !== this.props.location.state.notificationCar) {
+            if (!this.props.location.state.notificationCar) return;
+            this.selectedFromNotification();
+        }
+    }
+
+    selectedFromNotification = () => {
+        let select = document.querySelector("select");
+        let notificationCar = this.props.location.state.notificationCar;
+        Array.from(select.options).forEach((el) => {
+            if (el.value === notificationCar) {
+                select.value = notificationCar;
+                this.setState({
+                    ...this.state,
+                    selectedCar: this.state.user.cars.filter((car) => car.registration_number === notificationCar)[0]
+                });
+            }
+            return;
+        });
     }
 
     handleAddCarChange = (event) => {
@@ -160,7 +186,7 @@ class UserPanel extends Component {
         var paidIndex = event.target.parentElement.getAttribute("index");
         var payments = this.state.selectedCar.payments;
         var payment = payments.filter(el => {
-            return el.paymentId == event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment");
+            return el.paymentId.toString() === event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment").toString();
         });
         payment[0].due_dates.paid[paidIndex] = !payment[0].due_dates.paid[paidIndex];
         payments[payment[0].paymentId - 1] = payment[0];
@@ -282,7 +308,7 @@ class UserPanel extends Component {
                             <option>Select Car</option>
                             {this.state.user?.cars.map((car, i) => {
                                 return (
-                                    <option key={i}>{car.registration_number}</option>
+                                    <option key={i} value={car.registration_number}>{car.registration_number}</option>
                                 )
                             })}
                     </select>

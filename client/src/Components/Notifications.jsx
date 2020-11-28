@@ -28,7 +28,7 @@ class Notifications extends Component {
                     <div id="unread">{this.state.users.length}</div>
                     <div id="notifications" style={{"display": "none"}}>
                         {this.state.users.map((el,i) => {
-                            return (<Link to={{ pathname: `/users/${el.id}`, state: { id: el.id}}} key={i}>
+                            return (<Link to={{ pathname: `/users/${el.id}`, state: { id: el.id, notificationCar: el.car}}} key={i}>
                                 <div>
                                     {el.name}
                                 </div>

@@ -123,3 +123,11 @@ body {
     margin: 0;
     padding: 5px;
 }
+
+.payments th{
+    border: 1px solid black;
+}
+
+.payments th *{
+    margin: 0 5px;
+}

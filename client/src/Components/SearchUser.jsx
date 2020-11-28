@@ -29,6 +29,7 @@ class SearchUser extends Component {
             if (this.state.users && Object.entries(this.state.data).length !== 0) {
                 for (var obj of this.state.users) {
                     for (var key in this.state.data) {
+                        console.log(this.state.data)
                         if (new RegExp(this.escapeRegExp(this.state.data[key].toLowerCase())).test(obj[key].toLowerCase())) {
                             result.push(obj)
                         }
@@ -62,9 +63,9 @@ class SearchUser extends Component {
                 <form action="/search-user" className="search-user">
                     <input type="text" onChange={this.handleChange} name="name" placeholder="Name" />
                     <input type="text" onChange={this.handleChange} name="phone" placeholder="Phone" />
-                    <input type="text" onChange={this.handleChange} name="car-reg-number" placeholder="Car Registration Number" />
+                    <input type="text" onChange={this.handleChange} name="registrationNumber" placeholder="Car Registration Number" />
                     <input type="text" onChange={this.handleChange} name="vin" placeholder="VIN" />
-                    <input type="text" onChange={this.handleChange} name="doc-number" placeholder="Document Number" />
+                    <input type="text" onChange={this.handleChange} name="documentNumber" placeholder="Document Number" />
                 </form>
                 <div>
                     <form action={`/users/${this.state.selected}`} className="filtered-users-list">

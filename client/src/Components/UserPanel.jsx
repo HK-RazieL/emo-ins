@@ -35,7 +35,9 @@ class UserPanel extends Component {
                     user: json[0],
                     selectedCar: ""
                 });
-                document.querySelectorAll("select")[0].selectedIndex = 0;
+                let select = document.querySelectorAll("select");
+                if (!select) return;
+                select[0].selectedIndex = 0
             });
         }
     }
@@ -58,7 +60,7 @@ class UserPanel extends Component {
                 ...this.state.user,
                 [event.target.name]: event.target.value
             }
-        })
+        });
     }
 
     addCar = (event) => {
@@ -109,7 +111,7 @@ class UserPanel extends Component {
         var body = {
             paymentType: this.state.newInsurance.insuranceType,
             paymentId: this.state.selectedCar.payments.length + 1,
-            documentNumber: this.state.documentNumber,
+            documentNumber: this.state.newInsurance.documentNumber,
             due_dates: {
                 dates: [],
                 paid: []
@@ -273,7 +275,7 @@ class UserPanel extends Component {
                 <div>Created: {this.state.user?.account_creation_date?.slice(0, 10)}</div>
                 <button onClick={this.saveUser}>SAVE</button>
                 <div>
-                    <textarea name="comments" onChange={this.handleComment} placeholder="Comments" cols="50" rows="10">{this.state.user?.comments}</textarea>
+                    <textarea name="comments" onChange={this.handleComment} placeholder="Comments" cols="50" rows="10" value={this.state.user?.comments} />
                 </div>
                 <div>
                     <select onChange={this.selectCar}>
@@ -325,6 +327,9 @@ class UserPanel extends Component {
                                     <option value="4">4</option>
                                     <option value="12">12</option>
                                 </select>
+                            </div>
+                            <div>
+                                <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
                             </div>
                             <div>
                                 <input type="text" onChange={this.handleEdit} placeholder="dd-mm-yyyy" name="startingDate" />
@@ -381,10 +386,11 @@ class UserPanel extends Component {
                                 <table className="payments" index={i + 1} payment={el.paymentId}>
                                     <thead>
                                         <tr>
-                                            <th>
-                                                <div>{el.paymentType}</div>
+                                            <th colSpan={el.due_dates.paid.length}>
+                                                <span>{el.paymentType}</span>
+                                                <span>{el.documentNumber}</span>
                                                 <button onClick={this.openEditCarPayment} payment={el.paymentId}>Edit</button>
-                                                <div>{el.documentNumber}</div>
+                                                <button  payment={el.paymentId}>Delete</button>
                                             </th>
                                         </tr>
                                     </thead>

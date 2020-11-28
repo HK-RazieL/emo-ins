@@ -8,12 +8,14 @@ import Notifications from "./Notifications";
 class Nav extends Component {
     showNotifications = () => {
         var notifications = document.querySelector("#notifications");
+        if(!notifications) return;
         if (notifications.style.display === "none") {
             notifications.style.display = "block"
         } else {
             notifications.style.display = "none"
         }
     }
+
     render() {
         return (
             <>

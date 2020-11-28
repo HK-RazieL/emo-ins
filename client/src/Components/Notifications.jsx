@@ -23,25 +23,29 @@ class Notifications extends Component {
     render() {
         return (
             <>
-                {this.state.users ? <div id="unread">{this.state.users.length}</div> : null}
-                <div id="notifications" style={{"display": "none"}}>
-                    {this.state.users.map((el,i) => {
-                        return (<Link to={{ pathname: `/users/${el.id}`, state: { id: el.id}}} key={i}>
-                            <div>
-                                {el.name}
-                            </div>
-                            <div>
-                                {el.car}
-                            </div>
-                            <div>
-                                {el.payment}
-                            </div>
-                            <div>
-                                {`${new Date(el.date).getDate()}-${(new Date(el.date).getMonth() + 1).toString().padStart(2,0)}-${new Date(el.date).getFullYear()}`}
-                            </div>
-                        </Link>)
-                    })}
-                </div>
+                {this.state.users.length > 0 ? 
+                <>
+                    <div id="unread">{this.state.users.length}</div>
+                    <div id="notifications" style={{"display": "none"}}>
+                        {this.state.users.map((el,i) => {
+                            return (<Link to={{ pathname: `/users/${el.id}`, state: { id: el.id}}} key={i}>
+                                <div>
+                                    {el.name}
+                                </div>
+                                <div>
+                                    {el.car}
+                                </div>
+                                <div>
+                                    {el.payment}
+                                </div>
+                                <div>
+                                    {`${new Date(el.date).getDate()}-${(new Date(el.date).getMonth() + 1).toString().padStart(2,0)}-${new Date(el.date).getFullYear()}`}
+                                </div>
+                            </Link>)
+                        })}
+                    </div>
+                </>
+                : null}
             </>
         );
     }

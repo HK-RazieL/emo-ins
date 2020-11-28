@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 
 class SearchUser extends Component {
     state = {
-        data: []
+        data: [],
+        filter: {}
     }
 
     escapeRegExp = (string) => {
@@ -23,36 +24,79 @@ class SearchUser extends Component {
         })
     }
 
-    componentDidUpdate = (prevProps, prevState) => {
-        if (JSON.stringify(prevState) !== JSON.stringify(this.state)) {
-            var result = [];
-            if (this.state.users && Object.entries(this.state.data).length !== 0) {
-                for (var obj of this.state.users) {
-                    for (var key in this.state.data) {
-                        if (new RegExp(this.escapeRegExp(this.state.data[key].toLowerCase())).test(obj[key].toLowerCase())) {
-                            result.push(obj)
-                        }
-                    }
-                }
-            }
-
-            this.setState({
-                ...this.state,
-                filtered: [...result]
-            });
-        }
-    }
-
     handleChange = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
         this.setState({
             ...this.state,
-            data: {
-                ...this.state.data,
+            filter: {
+                ...this.state.filter,
                 [event.target.name]: event.target.value
             }
         });
+    }
+
+    filterData = () => {
+        var filter = this.state.filter;
+        var data = this.state.users;
+        var filteredCars;
+        var result = [];
+        if (data && Object.entries(filter).length !== 0) {
+            for (var obj of data) {
+                var flag = true;
+                for (var key in filter) {
+                    switch (key) {
+                        case "name":
+                        case "phone":
+                            if (!new RegExp(this.escapeRegExp(filter[key])).test(obj[key])) {
+                                flag = false;
+                            }
+                            break;
+                        case "registrationNumber":
+                            filteredCars = obj.cars.filter((car) => {
+                                return car.registration_number.toLowerCase().includes(filter[key].toLowerCase());
+                            });
+                            if (!filteredCars.length) {
+                                flag = false;
+                            }
+                            break;
+                        case "vin":
+                            filteredCars = obj.cars.filter((car) => {
+                                return car.vin.toLowerCase().includes(filter[key].toLowerCase());
+                            });
+                            if (!filteredCars.length) {
+                                flag = false;
+                            }
+                            break;
+                        case "documentNumber":
+                            filteredCars = obj.cars.filter((car) => {
+                                for (let i = 0; i < car.payments.length; i++) {
+                                    if (car.payments[i].documentNumber.toLowerCase().includes(filter[key].toLowerCase())) {
+                                        return car;
+                                    }
+                                }
+                            });
+                            if (!filteredCars.length) {
+                                flag = false;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                if (flag) {
+                    result.push(obj)
+                }
+            }
+        }
+        this.setState({
+            ...this.state,
+            filtered: result
+        })
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        if (JSON.stringify(prevState.filter) !== JSON.stringify(this.state.filter)){
+            this.filterData();
+        }
     }
 
     render() {
@@ -68,10 +112,10 @@ class SearchUser extends Component {
                 </form>
                 <div>
                     <form action={`/users/${this.state.selected}`} className="filtered-users-list">
-                        {this.state.filtered?.length && (<h4>
+                        {this.state.filtered?.length > 0 && (<h4>
                             <div>#</div>
                             <div>Name</div>
-                            <div>EGN</div>
+                            <div>Cars</div>
                             <div>Phone</div>
                         </h4>)}
                         {this.state.filtered?.map((user, index) => {
@@ -79,7 +123,7 @@ class SearchUser extends Component {
                                 <Link to={{ pathname: `/users/${user._id}`, state: { id: user._id}}} key={index} id={user._id} className="filtered-user">
                                     <div onClick={this.openUser}>{index + 1}</div>
                                     <div>{user.name}</div>
-                                    <div>{user.egn}</div>
+                                    <div>{user.cars.map(el => el.registration_number).join(" / ")}</div>
                                     <div>{user.phone}</div>
                                 </Link>
                             )

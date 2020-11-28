@@ -1,17 +1,13 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 class SearchUser extends Component {
     state = {
         data: []
     }
 
     escapeRegExp = (string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return string.replace(/[.*+?^${}()|[\]\\]/gi, '\\$&');
     }
 
     componentDidMount = () => {
@@ -32,14 +28,10 @@ class SearchUser extends Component {
             var result = [];
             if (this.state.users && Object.entries(this.state.data).length !== 0) {
                 for (var obj of this.state.users) {
-                    var flag = true;
                     for (var key in this.state.data) {
-                        if (!new RegExp(this.escapeRegExp(this.state.data[key])).test(obj[key])) {
-                            flag = false
+                        if (new RegExp(this.escapeRegExp(this.state.data[key].toLowerCase())).test(obj[key].toLowerCase())) {
+                            result.push(obj)
                         }
-                    }
-                    if (flag) {
-                        result.push(obj)
                     }
                 }
             }

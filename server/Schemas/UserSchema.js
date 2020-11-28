@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
         payments: [{
             paymentId: Number,
             paymentType: String,
+            documentNumber: String,
             due_dates: {
                 dates: [Date],
                 paid: [Boolean],

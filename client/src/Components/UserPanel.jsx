@@ -109,6 +109,7 @@ class UserPanel extends Component {
         var body = {
             paymentType: this.state.newInsurance.insuranceType,
             paymentId: this.state.selectedCar.payments.length + 1,
+            documentNumber: this.state.documentNumber,
             due_dates: {
                 dates: [],
                 paid: []
@@ -199,6 +200,7 @@ class UserPanel extends Component {
         var body = {
             paymentType: this.state.editedPayment.insuranceType,
             paymentId: this.state.editing,
+            documentNumber: this.state.editedPayment.documentNumber,
             due_dates: {
                 dates: [],
                 paid: []
@@ -219,7 +221,7 @@ class UserPanel extends Component {
                 return false;
             }
         });
-        car.payments[this.state.editing] =  body;
+        car.payments[this.state.editing - 1] =  body;
         this.setState({
             ...this.state,
             editedPayment: {},
@@ -362,6 +364,9 @@ class UserPanel extends Component {
                                 </select>
                             </div>
                             <div>
+                                <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
+                            </div>
+                            <div>
                                 <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" />
                             </div>
                             <input type="submit" value="Add" onClick={this.addNewInsurance}/>
@@ -377,15 +382,16 @@ class UserPanel extends Component {
                                     <thead>
                                         <tr>
                                             <th>
-                                                {el.paymentType}
+                                                <div>{el.paymentType}</div>
                                                 <button onClick={this.openEditCarPayment} payment={el.paymentId}>Edit</button>
+                                                <div>{el.documentNumber}</div>
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
                                             {el.due_dates?.dates.map((a, i) => {
-                                                return <td key={i}>{`${new Date(a).getDate()}-${(new Date(a).getMonth() + 1).toString().padStart(2,0)}-${new Date(a).getFullYear()}`}</td>
+                                                return <td key={i}>{`${new Date(a).getDate().toString().padStart(2,0)}-${(new Date(a).getMonth() + 1).toString().padStart(2,0)}-${new Date(a).getFullYear()}`}</td>
                                             })}
                                         </tr>
                                         <tr>

@@ -89,10 +89,14 @@ class SearchUser extends Component {
                 }
             }
         }
+        let sum = 0;
+        for (let key in filter) {
+            sum += filter[key].length;
+        }
         this.setState({
             ...this.state,
-            filtered: result
-        })
+            filtered: sum === 0 ? [] : result
+        });
     }
 
     componentDidUpdate = (prevProps, prevState) => {

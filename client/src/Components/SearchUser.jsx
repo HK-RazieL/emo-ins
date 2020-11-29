@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
@@ -73,6 +74,7 @@ class SearchUser extends Component {
                                         return car;
                                     }
                                 }
+                                return "";
                             });
                             if (!filteredCars.length) {
                                 flag = false;

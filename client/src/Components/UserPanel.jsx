@@ -136,7 +136,6 @@ class UserPanel extends Component {
         let day = this.state.newInsurance.startingDate.slice(0, 2);
         var body = {
             paymentType: this.state.newInsurance.insuranceType,
-            paymentId: this.state.selectedCar.payments.length + 1,
             documentNumber: this.state.newInsurance.documentNumber,
             due_dates: {
                 dates: [],
@@ -183,14 +182,14 @@ class UserPanel extends Component {
     }
 
     makePayment = (event) => {
-        var paidIndex = event.target.parentElement.getAttribute("index");
-        var payments = this.state.selectedCar.payments;
-        var payment = payments.filter(el => {
-            return el.paymentId.toString() === event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment").toString();
+        let paidIndex = event.target.parentElement.getAttribute("index");
+        let payments = this.state.selectedCar.payments;
+        let paymentId = event.target.parentElement.parentElement.parentElement.parentElement.getAttribute("payment");
+        let payment = payments.find((pay) => {
+            return pay._id === paymentId;
         });
-        payment[0].due_dates.paid[paidIndex] = !payment[0].due_dates.paid[paidIndex];
-        payments[payment[0].paymentId - 1] = payment[0];
-        var car = {
+        payment.due_dates.paid[paidIndex] = !payment.due_dates.paid[paidIndex];
+        let car = {
             ...this.state.selectedCar,
             payments: [...payments]
         }
@@ -225,9 +224,8 @@ class UserPanel extends Component {
         let year = this.state.editedPayment.startingDate.slice(6, 10);
         let month = this.state.editedPayment.startingDate.slice(3, 5);
         let day = this.state.editedPayment.startingDate.slice(0, 2);
-        var body = {
+        let body = {
             paymentType: this.state.editedPayment.insuranceType,
-            paymentId: this.state.editing,
             documentNumber: this.state.editedPayment.documentNumber,
             due_dates: {
                 dates: [],
@@ -240,7 +238,7 @@ class UserPanel extends Component {
             body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
-        var car;
+        let car;
         this.state.user.cars.filter((el) => {
             if (el.registration_number !== this.state.selectedCar.registration_number) {
                 return el;
@@ -249,17 +247,40 @@ class UserPanel extends Component {
                 return false;
             }
         });
-        car.payments[this.state.editing - 1] =  body;
+        car.payments = car.payments.map((payment) => {
+            if (payment._id === this.state.editing) {
+                return body;
+            }
+            return payment;
+        });
         this.setState({
             ...this.state,
             editedPayment: {},
             user: {
                 ...this.state.user,
-                cars : [...this.state.user.cars]
+                cars: [...this.state.user.cars]
             }
         }, () => {
             this.closeEditCarPayment();
         });
+    }
+
+    deletePayment = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!window.confirm("Are you sure you want to DELETE this payment?")) {
+            return;
+        }
+        let cars = this.state.user.cars;
+        let car = cars.filter((car) => car.registration_number === this.state.selectedCar.registration_number)[0];
+        car.payments = car.payments.filter((payment) => payment._id !== event.target.getAttribute("payment"));
+        this.setState({
+            ...this.state,
+            user: {
+                ...this.state.user,
+                cars: [...this.state.user.cars]
+            }
+        })
     }
         
 
@@ -409,14 +430,14 @@ class UserPanel extends Component {
                     {this.state.selectedCar?.payments?.map((el, i) => {
                         return (
                             <div key={i}>
-                                <table className="payments" index={i + 1} payment={el.paymentId}>
+                                <table className="payments" index={i} payment={el._id}>
                                     <thead>
                                         <tr>
                                             <th colSpan={el.due_dates.paid.length}>
                                                 <span>{el.paymentType}</span>
                                                 <span>{el.documentNumber}</span>
-                                                <button onClick={this.openEditCarPayment} payment={el.paymentId}>Edit</button>
-                                                <button  payment={el.paymentId}>Delete</button>
+                                                <button onClick={this.openEditCarPayment} payment={el._id}>Edit</button>
+                                                <button onClick={this.deletePayment} payment={el._id}>Delete</button>
                                             </th>
                                         </tr>
                                     </thead>

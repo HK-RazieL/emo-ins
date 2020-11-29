@@ -101,4 +101,16 @@ router.patch("/users/:id", jsonParser, (req, res) => {
     });
 })
 
+router.delete("/users/:id", jsonParser, (req, res) => {
+    console.log(req.body);
+
+    // TO DO:
+    User.remove({
+        _id: req.body.id
+    }, {useFindAndModify:false}, (err, user) => {
+        if (err) return console.error(err);
+        res.send(user);
+    });
+})
+
 module.exports = router;

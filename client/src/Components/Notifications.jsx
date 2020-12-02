@@ -39,7 +39,10 @@ class Notifications extends Component {
                                     {el.payment}
                                 </div>
                                 <div>
-                                    {`${new Date(el.date).getDate()}-${(new Date(el.date).getMonth() + 1).toString().padStart(2,0)}-${new Date(el.date).getFullYear()}`}
+                                    {el.renewal ? "Renewal!" : null}
+                                </div>
+                                <div>
+                                    {`${new Date(el.date).getDate().toString().padStart(2,0)}-${(new Date(el.date).getMonth() + 1).toString().padStart(2,0)}-${new Date(el.date).getFullYear()}`}
                                 </div>
                             </Link>)
                         })}

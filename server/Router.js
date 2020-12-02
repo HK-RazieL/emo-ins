@@ -40,20 +40,24 @@ router.get("/notifications", (req, res) => {
                         car: "",
                         payment: "",
                         date: "",
-                        id: ""
+                        id: "",
+                        renewal: false
                     };
                     var today = new Date();
                     var index = payment.due_dates.paid.indexOf(false)
                     var date = payment.due_dates.dates[index];
-                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24) <= 9) {
-                        notification.name = user.name;
-                        notification.car = car.registration_number;
-                        notification.payment = payment.paymentType;
-                        notification.date = date;
-                        notification.id = user._id;
-                        dueDates.push(notification);
-                        console.log(dueDates)
-                    }
+                    var endDate = payment.due_dates.dates[payment.due_dates.dates.length - 1];
+                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24 > 10)) continue;
+                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24 < 0)) continue;
+                    if (Math.floor((endDate - today) / 1000 / 60 / 60 / 24 < 0)) continue;
+                    if (Math.floor((endDate - today) / 1000 / 60 / 60 / 24 > 10)) continue;
+                    notification.name = user.name;
+                    notification.car = car.registration_number;
+                    notification.payment = payment.paymentType;
+                    notification.date = date || endDate;
+                    notification.id = user._id;
+                    !date ? notification.renewal = true : null;
+                    dueDates.push(notification);
                 }
             }
         }
@@ -102,9 +106,6 @@ router.patch("/users/:id", jsonParser, (req, res) => {
 })
 
 router.delete("/users/:id", jsonParser, (req, res) => {
-    console.log(req.body);
-
-    // TO DO:
     User.remove({
         _id: req.body.id
     }, {useFindAndModify:false}, (err, user) => {

@@ -101,14 +101,15 @@ class UserPanel extends Component {
         }, () => {
             this.setState({
                 addNewCar: {}
-            })
+            });
+            this.saveUser();
             this.closeAddCar();
         });
     }
 
     selectCar = (event) => {
         var selectedCar = this.state.user?.cars.filter((el) => {
-            return el.registration_number === event.target.value
+            return el.registration_number === event.target.value;
         })
         this.setState({
             ...this.state,
@@ -128,13 +129,13 @@ class UserPanel extends Component {
         });
     }
 
-    addNewInsurance = (event) => {
+    createNewInsurance = (event) => {
         event.preventDefault();
         event.stopPropagation();
         let year = this.state.newInsurance.startingDate.slice(6, 10);
         let month = this.state.newInsurance.startingDate.slice(3, 5);
         let day = this.state.newInsurance.startingDate.slice(0, 2);
-        var body = {
+        let body = {
             paymentType: this.state.newInsurance.insuranceType,
             documentNumber: this.state.newInsurance.documentNumber,
             due_dates: {
@@ -148,7 +149,8 @@ class UserPanel extends Component {
             body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
-        var car;
+        body.due_dates.dates.push(new Date(`${Number(year) + 1}-${month}-${day} 12:00:00.000Z`));
+        let car;
         this.state.user.cars.filter((el) => {
             if (el.registration_number !== this.state.selectedCar.registration_number) {
                 return el;
@@ -165,8 +167,9 @@ class UserPanel extends Component {
                 cars : [...this.state.user.cars]
             }
         }, () => {
+            this.saveUser();
             this.closeAddCarPayment();
-        })
+        });
     }
 
     saveUser = () => {
@@ -176,9 +179,7 @@ class UserPanel extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(this.state.user)
-        }).then(()=> {
-            window.location.reload();
-        })
+        });
     }
 
     makePayment = (event) => {
@@ -197,7 +198,7 @@ class UserPanel extends Component {
             ...this.state,
             selectedCar: car
         }, () => {
-            this.forceUpdate();
+            this.saveUser();
         });
     }
 
@@ -238,6 +239,7 @@ class UserPanel extends Component {
             body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
+        body.due_dates.dates.push(new Date(`${Number(year) + 1}-${month}-${day} 12:00:00.000Z`));
         let car;
         this.state.user.cars.filter((el) => {
             if (el.registration_number !== this.state.selectedCar.registration_number) {
@@ -261,6 +263,7 @@ class UserPanel extends Component {
                 cars: [...this.state.user.cars]
             }
         }, () => {
+            this.saveUser();
             this.closeEditCarPayment();
         });
     }
@@ -280,6 +283,8 @@ class UserPanel extends Component {
                 ...this.state.user,
                 cars: [...this.state.user.cars]
             }
+        }, () => {
+            this.saveUser();
         })
     }
         
@@ -421,7 +426,7 @@ class UserPanel extends Component {
                             <div>
                                 <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" />
                             </div>
-                            <input type="submit" value="Add" onClick={this.addNewInsurance}/>
+                            <input type="submit" value="Add" onClick={this.createNewInsurance}/>
                             <button onClick={this.closeAddCarPayment}>X</button>
                         </form>
                     </Modal>

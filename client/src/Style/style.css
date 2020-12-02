@@ -131,3 +131,8 @@ body {
 .payments th *{
     margin: 0 5px;
 }
+
+.user-panel-personal-data * {
+    margin-bottom: 3px;
+    margin-top: 3px;
+}

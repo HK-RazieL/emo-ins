@@ -6,7 +6,7 @@ import UserPanel from "./UserPanel";
 import Notifications from "./Notifications";
 
 class Nav extends Component {
-    showNotifications = () => {
+    showNotifications = (event) => {
         var notifications = document.querySelector("#notifications");
         if(!notifications) return;
         if (notifications.style.display === "none") {

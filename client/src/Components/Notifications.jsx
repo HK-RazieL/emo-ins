@@ -5,6 +5,7 @@ class Notifications extends Component {
     state = {
         users: []
     }
+    
     componentDidMount = () => {
         fetch("/notifications", {
             method: "GET",
@@ -20,6 +21,7 @@ class Notifications extends Component {
             });
         });
    }
+   
     render() {
         return (
             <>
@@ -38,7 +40,7 @@ class Notifications extends Component {
                                 <div>
                                     {el.payment}
                                 </div>
-                                <div>
+                                <div id="renewal">
                                     {el.renewal ? "Renewal!" : null}
                                 </div>
                                 <div>

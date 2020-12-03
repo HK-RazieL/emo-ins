@@ -61,6 +61,9 @@ body {
     padding: 4px;
 }
 
+#notifications #renewal {
+    color: red;
+}
 #unread {
     background: red;
     border-radius: 50%;
@@ -78,11 +81,13 @@ body {
 .create-new-user {
     display: grid;
     grid-template-columns: 1fr;
+    margin: 0 20%;
 }
 
 .search-user {
     display: grid;
     grid-template-columns: 1fr;
+    margin: 0 20%;
 }
 
 .filtered-users-list a,
@@ -111,6 +116,11 @@ body {
     outline: none;
 }
 
+.modal select,
+input[type=text]{
+    width: 200px;
+}
+
 .payments {
     border: 1px solid black;
     border-collapse: collapse;
@@ -132,7 +142,13 @@ body {
     margin: 0 5px;
 }
 
+.user-panel-personal-data select, 
+input[type=text] {
+    width: 200px;
+}
+
 .user-panel-personal-data * {
     margin-bottom: 3px;
     margin-top: 3px;
 }
+

@@ -46,17 +46,15 @@ router.get("/notifications", (req, res) => {
                     var today = new Date();
                     var index = payment.due_dates.paid.indexOf(false)
                     var date = payment.due_dates.dates[index];
-                    var endDate = payment.due_dates.dates[payment.due_dates.dates.length - 1];
+                    if (index === -1) break;
                     if (Math.floor((date - today) / 1000 / 60 / 60 / 24 > 10)) continue;
                     if (Math.floor((date - today) / 1000 / 60 / 60 / 24 < 0)) continue;
-                    if (Math.floor((endDate - today) / 1000 / 60 / 60 / 24 < 0)) continue;
-                    if (Math.floor((endDate - today) / 1000 / 60 / 60 / 24 > 10)) continue;
                     notification.name = user.name;
                     notification.car = car.registration_number;
                     notification.payment = payment.paymentType;
-                    notification.date = date || endDate;
+                    notification.date = date;
                     notification.id = user._id;
-                    !date ? notification.renewal = true : null;
+                    index === payment.due_dates.dates.length - 1 ? notification.renewal = true : null;
                     dueDates.push(notification);
                 }
             }

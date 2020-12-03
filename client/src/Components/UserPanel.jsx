@@ -150,6 +150,7 @@ class UserPanel extends Component {
             body.due_dates.paid.push(false);
         }
         body.due_dates.dates.push(new Date(`${Number(year) + 1}-${month}-${day} 12:00:00.000Z`));
+        body.due_dates.paid.push(false);
         let car;
         this.state.user.cars.filter((el) => {
             if (el.registration_number !== this.state.selectedCar.registration_number) {
@@ -346,12 +347,10 @@ class UserPanel extends Component {
                         <form action={`/user/${this.state.user?._id}`} method="PUT">
                             <h3>Add new car</h3>
                             <div>
-                                <div>Registration:</div>
-                                <input type="text" name="registration_number" onChange={this.handleAddCarChange} />
+                                <input type="text" name="registration_number" onChange={this.handleAddCarChange} placeholder="Registration Number" />
                             </div>
                             <div>
-                                <div>VIN:</div>
-                                <input type="text" name="vin" onChange={this.handleAddCarChange} />
+                                <input type="text" name="vin" onChange={this.handleAddCarChange} placeholder="VIN" />
                             </div>
                             <input type="submit" value="Add" onClick={this.addCar}/>
                             <button onClick={this.closeAddCar}>X</button>
@@ -372,6 +371,16 @@ class UserPanel extends Component {
                             </div>
                             <div>
                                 <select name="payments" onClick={this.handleEdit}>
+                                    <option value="">Number of payments</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
+                                <select name="payment" onClick={this.handleEdit}>
                                     <option value="">Number of payments</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -421,6 +430,16 @@ class UserPanel extends Component {
                                 </select>
                             </div>
                             <div>
+                                <select name="payment" onClick={this.handleAddNewInsuranceChange}>
+                                    <option value="">Next Payment</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div>
                                 <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
                             </div>
                             <div>
@@ -449,7 +468,10 @@ class UserPanel extends Component {
                                     <tbody>
                                         <tr>
                                             {el.due_dates?.dates.map((a, i) => {
-                                                return <td key={i}>{`${new Date(a).getDate().toString().padStart(2,0)}-${(new Date(a).getMonth() + 1).toString().padStart(2,0)}-${new Date(a).getFullYear()}`}</td>
+                                                return (<td key={i}>
+                                                        {i === el.due_dates.dates.length - 1 ? "Renewal on: " : null}
+                                                        {`${new Date(a).getDate().toString().padStart(2,0)}-${(new Date(a).getMonth() + 1).toString().padStart(2,0)}-${new Date(a).getFullYear()}`}
+                                                    </td>)
                                             })}
                                         </tr>
                                         <tr>

@@ -133,52 +133,7 @@ class UserPanel extends Component {
         event.preventDefault();
         event.stopPropagation();
         if (!this.state.newInsurance.startingDate) return;
-        var year = this.state.newInsurance.startingDate.slice(6, 10);
-        var month = this.state.newInsurance.startingDate.slice(3, 5);
-        var day = this.state.newInsurance.startingDate.slice(0, 2);
-        var body = {
-            paymentType: this.state.newInsurance.insuranceType,
-            documentNumber: this.state.newInsurance.documentNumber,
-            due_dates: {
-                dates: [],
-                paid: []
-            }
-        }
-        for (let i = this.state.newInsurance.payment; i > 1; i--) {
-            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
-            newDate.setMonth(newDate.getMonth() - i * (12 / this.state.newInsurance.payments));
-            body.due_dates.dates.push(newDate);
-            body.due_dates.paid.push(false);
-        }
-        for (let i = 0; i <= Number(this.state.newInsurance.payments - this.state.newInsurance.payment); i++) {
-            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
-            newDate.setMonth(newDate.getMonth() + i * (12 / this.state.newInsurance.payments));
-            body.due_dates.dates.push(newDate);
-            body.due_dates.paid.push(false);
-        }
-        var renewalDate = new Date(body.due_dates.dates[0]);
-        body.due_dates.dates.push(renewalDate.setMonth(renewalDate.getMonth() + 12));
-        body.due_dates.paid.push(false);
-        let car;
-        this.state.user.cars.filter((el) => {
-            if (el.registration_number !== this.state.selectedCar.registration_number) {
-                return el;
-            } else {
-                car = el;
-                return false;
-            }
-        });
-        car.payments.push(body);
-        this.setState({
-            ...this.state,
-            user: {
-                ...this.state.user,
-                cars : [...this.state.user.cars]
-            }
-        }, () => {
-            this.saveUser();
-            this.closeAddCarPayment();
-        });
+        this.replacingCar(this.state.newInsurance);
     }
 
     saveUser = () => {
@@ -221,6 +176,63 @@ class UserPanel extends Component {
         });
     }
 
+    replacingCar = (car) => {
+        let year = car.startingDate.slice(6, 10);
+        let month = car.startingDate.slice(3, 5);
+        let day = car.startingDate.slice(0, 2);
+        let body = {
+            paymentType: car.insuranceType,
+            documentNumber: car.documentNumber,
+            due_dates: {
+                dates: [],
+                paid: []
+            }
+        }
+        for (let i = car.payment; i > 1; i--) {
+            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
+            newDate.setMonth(newDate.getMonth() - i * (12 / car.payments));
+            body.due_dates.dates.push(newDate);
+            body.due_dates.paid.push(false);
+        }
+        for (let i = 0; i <= Number(car.payments - car.payment); i++) {
+            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
+            newDate.setMonth(newDate.getMonth() + i * (12 / car.payments));
+            body.due_dates.dates.push(newDate);
+            body.due_dates.paid.push(false);
+        }
+        var renewalDate = new Date(body.due_dates.dates[0]);
+        body.due_dates.dates.push(renewalDate.setMonth(renewalDate.getMonth() + 12));
+        body.due_dates.paid.push(false);
+        let newCar = this.state.user.cars.find((el) => {
+            return el.registration_number === this.state.selectedCar.registration_number
+        });
+        if (newCar.payments.length === 0 || !this.state.editing) {
+            newCar.payments.push(body);
+        } else if (this.state.editing) {
+            newCar.payments = newCar.payments.map((payment) => {
+                if(this.state.editing === payment._id) {
+                    return body;
+                }
+                return payment;
+            });
+        }
+        this.setState({
+            ...this.state,
+            user: {
+                ...this.state.user,
+                cars : this.state.user.cars.map((el) => {
+                    if (el.registration_number === this.state.selectedCar.registration_number) {
+                        return newCar;
+                    }
+                    return el;
+                })
+            }
+        }, () => {
+            this.saveUser();
+            this.closeAddCarPayment();
+        });
+    }
+
     editPayment = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -231,50 +243,7 @@ class UserPanel extends Component {
             alert("One or more fields are not filled!")
             return;
         }
-        let year = this.state.editedPayment.startingDate.slice(6, 10);
-        let month = this.state.editedPayment.startingDate.slice(3, 5);
-        let day = this.state.editedPayment.startingDate.slice(0, 2);
-        let body = {
-            paymentType: this.state.editedPayment.insuranceType,
-            documentNumber: this.state.editedPayment.documentNumber,
-            due_dates: {
-                dates: [],
-                paid: []
-            }
-        }
-        for (let i = 0; i < this.state.editedPayment.payments; i++) {
-            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
-            newDate.setMonth(newDate.getMonth() + i * (12 / this.state.editedPayment.payments));
-            body.due_dates.dates.push(newDate);
-            body.due_dates.paid.push(false);
-        }
-        body.due_dates.dates.push(new Date(`${Number(year) + 1}-${month}-${day} 12:00:00.000Z`));
-        let car;
-        this.state.user.cars.filter((el) => {
-            if (el.registration_number !== this.state.selectedCar.registration_number) {
-                return el;
-            } else {
-                car = el;
-                return false;
-            }
-        });
-        car.payments = car.payments.map((payment) => {
-            if (payment._id === this.state.editing) {
-                return body;
-            }
-            return payment;
-        });
-        this.setState({
-            ...this.state,
-            editedPayment: {},
-            user: {
-                ...this.state.user,
-                cars: [...this.state.user.cars]
-            }
-        }, () => {
-            this.saveUser();
-            this.closeEditCarPayment();
-        });
+        this.replacingCar(this.state.editedPayment);
     }
 
     deletePayment = (event) => {

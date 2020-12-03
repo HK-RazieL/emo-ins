@@ -156,8 +156,8 @@ class UserPanel extends Component {
             body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
-        var renewalDate = new Date(`${Number(year)}-${month}-${day} 12:00:00.000Z`)
-        body.due_dates.dates.push(renewalDate.setMonth(renewalDate.getMonth() + (Number(this.state.newInsurance.payments) - this.state.newInsurance.payment)));
+        var renewalDate = new Date(body.due_dates.dates[0]);
+        body.due_dates.dates.push(renewalDate.setMonth(renewalDate.getMonth() + 12));
         body.due_dates.paid.push(false);
         let car;
         this.state.user.cars.filter((el) => {

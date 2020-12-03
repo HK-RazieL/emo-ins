@@ -132,10 +132,10 @@ class UserPanel extends Component {
     createNewInsurance = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        let year = this.state.newInsurance.startingDate.slice(6, 10);
-        let month = this.state.newInsurance.startingDate.slice(3, 5);
-        let day = this.state.newInsurance.startingDate.slice(0, 2);
-        let body = {
+        var year = this.state.newInsurance.startingDate.slice(6, 10);
+        var month = this.state.newInsurance.startingDate.slice(3, 5);
+        var day = this.state.newInsurance.startingDate.slice(0, 2);
+        var body = {
             paymentType: this.state.newInsurance.insuranceType,
             documentNumber: this.state.newInsurance.documentNumber,
             due_dates: {
@@ -143,7 +143,13 @@ class UserPanel extends Component {
                 paid: []
             }
         }
-        for (let i = 0; i < this.state.newInsurance.payments; i++) {
+        for (let i = this.state.newInsurance.payment; i > 1; i--) {
+            let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
+            newDate.setMonth(newDate.getMonth() - i * (12 / this.state.newInsurance.payments));
+            body.due_dates.dates.push(newDate);
+            body.due_dates.paid.push(false);
+        }
+        for (let i = 0; i <= Number(this.state.newInsurance.payments - this.state.newInsurance.payment); i++) {
             let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
             newDate.setMonth(newDate.getMonth() + i * (12 / this.state.newInsurance.payments));
             body.due_dates.dates.push(newDate);
@@ -288,8 +294,16 @@ class UserPanel extends Component {
             this.saveUser();
         })
     }
-        
 
+    dateForPayment = () => {
+        if (!this.state.newInsurance?.payments) return;
+        var options = []
+        for (var i = 1; i <= this.state.newInsurance.payments; i ++) {
+            options.push(<option value={i} key={i}>{i}</option>)
+        }
+        return options;
+    }
+    
     openAddCar = () => {
         this.setState({ addCarModal: true, addNewCar: {} });
     }
@@ -380,16 +394,6 @@ class UserPanel extends Component {
                                 </select>
                             </div>
                             <div>
-                                <select name="payment" onClick={this.handleEdit}>
-                                    <option value="">Number of payments</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="12">12</option>
-                                </select>
-                            </div>
-                            <div>
                                 <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
                             </div>
                             <div>
@@ -431,12 +435,8 @@ class UserPanel extends Component {
                             </div>
                             <div>
                                 <select name="payment" onClick={this.handleAddNewInsuranceChange}>
-                                    <option value="">Next Payment</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="12">12</option>
+                                    <option value="">Date for payment</option>
+                                    {!this.state.newInsurance?.payments ? null : this.dateForPayment() }
                                 </select>
                             </div>
                             <div>

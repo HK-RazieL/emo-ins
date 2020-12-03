@@ -132,6 +132,7 @@ class UserPanel extends Component {
     createNewInsurance = (event) => {
         event.preventDefault();
         event.stopPropagation();
+        if (!this.state.newInsurance.startingDate) return;
         var year = this.state.newInsurance.startingDate.slice(6, 10);
         var month = this.state.newInsurance.startingDate.slice(3, 5);
         var day = this.state.newInsurance.startingDate.slice(0, 2);
@@ -155,7 +156,8 @@ class UserPanel extends Component {
             body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
-        body.due_dates.dates.push(new Date(`${Number(year) + 1}-${month}-${day} 12:00:00.000Z`));
+        var renewalDate = new Date(`${Number(year)}-${month}-${day} 12:00:00.000Z`)
+        body.due_dates.dates.push(renewalDate.setMonth(renewalDate.getMonth() + (Number(this.state.newInsurance.payments) - this.state.newInsurance.payment)));
         body.due_dates.paid.push(false);
         let car;
         this.state.user.cars.filter((el) => {
@@ -377,14 +379,14 @@ class UserPanel extends Component {
                         <form action={`/user/${this.state.user?._id}`} method="PUT">
                             <h3>Edit payment</h3>
                             <div>
-                                <select name="insuranceType" onClick={this.handleEdit}>
+                                <select name="insuranceType" onClick={this.handleEdit} required>
                                     <option value="">Insurance Type</option>
                                     <option value="autocasco">Autocasco</option>
                                     <option value="tpli">TPLI</option>
                                 </select>
                             </div>
                             <div>
-                                <select name="payments" onClick={this.handleEdit}>
+                                <select name="payments" onClick={this.handleEdit} required>
                                     <option value="">Number of payments</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -417,14 +419,14 @@ class UserPanel extends Component {
                         <form action={`/user/${this.state.user?._id}`} method="PUT">
                             <h3>Add a new car payment</h3>
                             <div>
-                                <select name="insuranceType" onClick={this.handleAddNewInsuranceChange}>
+                                <select name="insuranceType" onClick={this.handleAddNewInsuranceChange} required>
                                     <option value="">Insurance Type</option>
                                     <option value="autocasco">Autocasco</option>
                                     <option value="tpli">TPLI</option>
                                 </select>
                             </div>
                             <div>
-                                <select name="payments" onClick={this.handleAddNewInsuranceChange}>
+                                <select name="payments" onClick={this.handleAddNewInsuranceChange} required>
                                     <option value="">Number of payments</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -443,7 +445,7 @@ class UserPanel extends Component {
                                 <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
                             </div>
                             <div>
-                                <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" />
+                                <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" required />
                             </div>
                             <input type="submit" value="Add" onClick={this.createNewInsurance}/>
                             <button onClick={this.closeAddCarPayment}>X</button>

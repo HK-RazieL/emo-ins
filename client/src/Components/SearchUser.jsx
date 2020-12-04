@@ -37,54 +37,53 @@ class SearchUser extends Component {
 
     filterData = () => {
         var filter = this.state.filter;
+        for (var fil in filter) {
+            if (!filter[fil]) delete filter[fil];
+        }
         var data = this.state.users;
         var filteredCars;
         var result = [];
         if (data && Object.entries(filter).length !== 0) {
             for (var obj of data) {
-                var flag = true;
+                var flag = false;
                 for (var key in filter) {
-                    if (!obj[key]) {
-                        flag = false 
-                        break;
-                    }
                     switch (key) {
                         case "name":
-                            if (!new RegExp(this.escapeRegExp(filter[key].toLowerCase())).test(obj[key].toLowerCase())) {
-                                flag = false;
+                            if (obj[key].toLowerCase().includes(filter[key].toLowerCase())) {
+                                flag = true;
                             }
                         case "phone":
-                            if (!new RegExp(this.escapeRegExp(filter[key].replace(/\s*/g, ""))).test(obj[key].replace(/\s*/g, ""))) {
-                                flag = false;
+                            if (new RegExp(this.escapeRegExp(filter[key].replace(/\s*/g, ""))).test(obj[key].replace(/\s*/g, ""))) {
+                                flag = true;
                             }
                             break;
                         case "registrationNumber":
                             filteredCars = obj.cars.filter((car) => {
                                 return car.registration_number.toLowerCase().includes(filter[key].toLowerCase());
                             });
-                            if (!filteredCars.length) {
-                                flag = false;
+                            if (filteredCars.length) {
+                                flag = true;
                             }
                             break;
                         case "vin":
                             filteredCars = obj.cars.filter((car) => {
-                                return car.vin.toLowerCase().includes(filter[key].toLowerCase());
+                                return car.vin?.toLowerCase().includes(filter[key].toLowerCase());
                             });
-                            if (!filteredCars.length) {
-                                flag = false;
+                            if (filteredCars.length) {
+                                flag = true;
                             }
                             break;
                         case "documentNumber":
                             filteredCars = obj.cars.filter((car) => {
                                 for (let i = 0; i < car.payments.length; i++) {
-                                    if (car.payments[i].documentNumber.toLowerCase().includes(filter[key].toLowerCase())) {
+                                    if (car.payments[i].documentNumber?.toLowerCase().includes(filter[key].toLowerCase())) {
                                         return car;
                                     }
                                 }
                                 return "";
                             });
-                            if (!filteredCars.length) {
-                                flag = false;
+                            if (filteredCars.length) {
+                                flag = true;
                             }
                             break;
                         default:

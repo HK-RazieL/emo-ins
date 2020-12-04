@@ -31,9 +31,9 @@ router.get("/notifications", (req, res) => {
         var dueDates = [];
 
         for (var user of result) {
-            if (!user.cars) return;
+            if (!user.cars) continue;
             for (var car of user.cars) {
-                if (!car.payments) return;
+                if (!car.payments) continue;
                 for (var payment of car.payments) {
                     var notification = {
                         name: "",
@@ -46,9 +46,9 @@ router.get("/notifications", (req, res) => {
                     var today = new Date();
                     var index = payment.due_dates.paid.indexOf(false)
                     var date = payment.due_dates.dates[index];
-                    if (index === -1) break;
+                    if (index === -1) continue;
                     if (Math.floor((date - today) / 1000 / 60 / 60 / 24 > 10)) continue;
-                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24 < 0)) continue;
+                    if (Math.floor((date - today) / 1000 / 60 / 60 / 24 < -1)) continue;
                     notification.name = user.name;
                     notification.car = car.registration_number;
                     notification.payment = payment.paymentType;

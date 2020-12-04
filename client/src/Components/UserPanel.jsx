@@ -110,7 +110,7 @@ class UserPanel extends Component {
     selectCar = (event) => {
         var selectedCar = this.state.user?.cars.filter((el) => {
             return el.registration_number === event.target.value;
-        })
+        });
         this.setState({
             ...this.state,
             selectedCar: selectedCar[0]
@@ -168,7 +168,6 @@ class UserPanel extends Component {
             selectedCar: car
         }, () => {
             this.saveUser();
-            window.location.reload();
         });
     }
 
@@ -191,13 +190,13 @@ class UserPanel extends Component {
             "06": "DZI",
             "07": "Euroins",
             "08": "Generali Insurance",
-            "09": "Insurance company EIG Re",
+            "09": "EIG Re",
             "11": "Armeec",
             "19": "Energy",
             "22": "Lev Ins",
             "23": "OZK-Insurance",
             "26": "Grupama Insurance",
-            "30": "DallBogg: Life and Health",
+            "30": "DallBogg",
             "32": "Saglasie",
             "33": "Aset Insurance"
         }
@@ -205,7 +204,7 @@ class UserPanel extends Component {
         let month = car.startingDate.slice(3, 5);
         let day = car.startingDate.slice(0, 2);
         let body = {
-            insuranceCode: insuranceCodes[(/\/(\d{2})\//gi).exec(car.documentNumber)[1]],
+            insuranceCode: car.documentNumber ? insuranceCodes[(/\/(\d{2})\//gi).exec(car.documentNumber)[1]] : "",
             paymentType: car.insuranceType,
             documentNumber: car.documentNumber,
             due_dates: {
@@ -291,7 +290,27 @@ class UserPanel extends Component {
         }, () => {
             this.saveUser();
             window.location.reload();
-        })
+        });
+    }
+
+    deleteCar = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!window.confirm("Are you sure you want to DELETE this car?")) {
+            return;
+        }
+        let cars = this.state.user.cars;
+        cars = cars.filter((car) => car.registration_number !== this.state.selectedCar.registration_number);
+        this.setState({
+            ...this.state,
+            user: {
+                ...this.state.user,
+                cars
+            }
+        }, () => {
+            this.saveUser();
+            window.location.reload();
+        });
     }
 
     dateForPayment = () => {
@@ -361,6 +380,7 @@ class UserPanel extends Component {
                             })}
                     </select>
                     <button onClick={this.openAddCar}>Add</button>
+                    <button onClick={this.deleteCar}>Delete</button>
                     <Modal
                         isOpen={this.state.addCarModal}
                         className="modal"
@@ -402,7 +422,7 @@ class UserPanel extends Component {
                             </div>
                             <div>
                                 <select name="payment" onClick={this.handleEdit}>
-                                    <option value="">Date for payment</option>
+                                    <option value="">Next payment</option>
                                     {!this.state.editedPayment?.payments ? null : this.dateForPayment() }
                                 </select>
                             </div>
@@ -448,7 +468,7 @@ class UserPanel extends Component {
                             </div>
                             <div>
                                 <select name="payment" onClick={this.handleAddNewInsuranceChange}>
-                                    <option value="">Date for payment</option>
+                                    <option value="">Next payment</option>
                                     {!this.state.newInsurance?.payments ? null : this.dateForPayment() }
                                 </select>
                             </div>
@@ -471,9 +491,7 @@ class UserPanel extends Component {
                                     <thead>
                                         <tr>
                                             <th colSpan={el.due_dates.paid.length}>
-                                                <span>{el.insuranceCode}</span>
-                                                <span>{el.paymentType}</span>
-                                                <span>{el.documentNumber}</span>
+                                                <span>{el.insuranceCode} / {el.paymentType} / ({el.documentNumber})</span>
                                                 <button onClick={this.openEditCarPayment} payment={el._id}>Edit</button>
                                                 <button onClick={this.deletePayment} payment={el._id}>Delete</button>
                                             </th>

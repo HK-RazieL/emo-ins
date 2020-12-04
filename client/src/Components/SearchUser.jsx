@@ -44,10 +44,17 @@ class SearchUser extends Component {
             for (var obj of data) {
                 var flag = true;
                 for (var key in filter) {
+                    if (!obj[key]) {
+                        flag = false 
+                        break;
+                    }
                     switch (key) {
                         case "name":
+                            if (!new RegExp(this.escapeRegExp(filter[key].toLowerCase())).test(obj[key].toLowerCase())) {
+                                flag = false;
+                            }
                         case "phone":
-                            if (!new RegExp(this.escapeRegExp(filter[key])).test(obj[key])) {
+                            if (!new RegExp(this.escapeRegExp(filter[key].replace(/\s*/g, ""))).test(obj[key].replace(/\s*/g, ""))) {
                                 flag = false;
                             }
                             break;

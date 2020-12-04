@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
             required: true,
         },
         payments: [{
+            insuranceCode: String,
             paymentId: Number,
             paymentType: String,
             documentNumber: String,

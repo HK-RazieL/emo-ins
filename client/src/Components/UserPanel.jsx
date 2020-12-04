@@ -168,6 +168,7 @@ class UserPanel extends Component {
             selectedCar: car
         }, () => {
             this.saveUser();
+            window.location.reload();
         });
     }
 
@@ -182,10 +183,29 @@ class UserPanel extends Component {
     }
 
     replacingCar = (car) => {
+        let insuranceCodes = {
+            "01": "Aliance Bulgaria",
+            "02": "Bul Ins",
+            "03": "Bulstrad Viena Insurance Group",
+            "05": "Uniqa",
+            "06": "DZI",
+            "07": "Euroins",
+            "08": "Generali Insurance",
+            "09": "Insurance company EIG Re",
+            "11": "Armeec",
+            "19": "Energy",
+            "22": "Lev Ins",
+            "23": "OZK-Insurance",
+            "26": "Grupama Insurance",
+            "30": "DallBogg: Life and Health",
+            "32": "Saglasie",
+            "33": "Aset Insurance"
+        }
         let year = car.startingDate.slice(6, 10);
         let month = car.startingDate.slice(3, 5);
         let day = car.startingDate.slice(0, 2);
         let body = {
+            insuranceCode: insuranceCodes[(/\/(\d{2})\//gi).exec(car.documentNumber)[1]],
             paymentType: car.insuranceType,
             documentNumber: car.documentNumber,
             due_dates: {
@@ -193,6 +213,7 @@ class UserPanel extends Component {
                 paid: []
             }
         }
+        if (!car.payment) car.payment = 1;
         for (let i = car.payment - 1; i >= 0; i--) {
             let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
             newDate.setMonth(newDate.getMonth() - i * (12 / car.payments));
@@ -274,12 +295,20 @@ class UserPanel extends Component {
     }
 
     dateForPayment = () => {
-        if (!this.state.newInsurance?.payments) return;
-        var options = []
-        for (var i = 1; i <= this.state.newInsurance.payments; i ++) {
-            options.push(<option value={i} key={i}>{i}</option>)
+        if (this.state.newInsurance?.payments) {
+            var options = [];
+            for (var i = 1; i <= this.state.newInsurance.payments; i ++) {
+                options.push(<option value={i} key={i}>{i}</option>)
+            }
+            return options;
+        } else if (this.state.editedPayment?.payments) {
+            var options = [];
+            for (var i = 1; i <= this.state.editedPayment.payments; i ++) {
+                options.push(<option value={i} key={i}>{i}</option>)
+            }
+            return options;
         }
-        return options;
+        return;
     }
     
     openAddCar = () => {
@@ -372,7 +401,13 @@ class UserPanel extends Component {
                                 </select>
                             </div>
                             <div>
-                                <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
+                                <select name="payment" onClick={this.handleEdit}>
+                                    <option value="">Date for payment</option>
+                                    {!this.state.editedPayment?.payments ? null : this.dateForPayment() }
+                                </select>
+                            </div>
+                            <div>
+                                <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleEdit} />
                             </div>
                             <div>
                                 <input type="text" onChange={this.handleEdit} placeholder="dd-mm-yyyy" name="startingDate" />
@@ -436,6 +471,7 @@ class UserPanel extends Component {
                                     <thead>
                                         <tr>
                                             <th colSpan={el.due_dates.paid.length}>
+                                                <span>{el.insuranceCode}</span>
                                                 <span>{el.paymentType}</span>
                                                 <span>{el.documentNumber}</span>
                                                 <button onClick={this.openEditCarPayment} payment={el._id}>Edit</button>

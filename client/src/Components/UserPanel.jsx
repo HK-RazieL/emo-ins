@@ -134,6 +134,7 @@ class UserPanel extends Component {
         event.stopPropagation();
         if (!this.state.newInsurance.startingDate) return;
         this.replacingCar(this.state.newInsurance);
+
     }
 
     saveUser = () => {
@@ -153,6 +154,10 @@ class UserPanel extends Component {
         let payment = payments.find((pay) => {
             return pay._id === paymentId;
         });
+        if (!payment) {
+            alert("Please SAVE first");
+            return;
+        }
         payment.due_dates.paid[paidIndex] = !payment.due_dates.paid[paidIndex];
         let car = {
             ...this.state.selectedCar,
@@ -188,13 +193,13 @@ class UserPanel extends Component {
                 paid: []
             }
         }
-        for (let i = car.payment; i > 1; i--) {
+        for (let i = car.payment - 1; i >= 0; i--) {
             let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
             newDate.setMonth(newDate.getMonth() - i * (12 / car.payments));
             body.due_dates.dates.push(newDate);
             body.due_dates.paid.push(false);
         }
-        for (let i = 0; i <= Number(car.payments - car.payment); i++) {
+        for (let i = 1; i <= Number(car.payments - car.payment); i++) {
             let newDate = new Date(`${year}-${month}-${day} 12:00:00.000Z`);
             newDate.setMonth(newDate.getMonth() + i * (12 / car.payments));
             body.due_dates.dates.push(newDate);
@@ -230,6 +235,7 @@ class UserPanel extends Component {
         }, () => {
             this.saveUser();
             this.closeAddCarPayment();
+            window.location.reload();
         });
     }
 
@@ -263,6 +269,7 @@ class UserPanel extends Component {
             }
         }, () => {
             this.saveUser();
+            window.location.reload();
         })
     }
 

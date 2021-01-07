@@ -152,3 +152,18 @@ body {
     margin-top: 3px;
 }
 
+.user-panel-personal-data {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+.user-panel-personal-data {
+    margin-left: 1rem;
+}
+
+.user-info div{
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px 10px;
+    width: 375px;
+}

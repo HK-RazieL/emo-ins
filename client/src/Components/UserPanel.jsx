@@ -361,128 +361,126 @@ class UserPanel extends Component {
     render() {
         return (
             <div className="user-panel-personal-data">
-                <div>Client: {this.state.user?.name}</div>
-                <div>Phone: {this.state.user?.phone}</div>
-                <div>EGN: {this.state.user?.egn}</div>
-                <div>Address: {this.state.user?.address}</div>
-                <div>Created: {this.state.user?.account_creation_date?.slice(0, 10)}</div>
-                <button onClick={this.saveUser}>SAVE</button>
-                <div>
-                    <textarea name="comments" onChange={this.handleComment} placeholder="Comments" cols="50" rows="10" value={this.state.user?.comments} />
-                </div>
-                <div>
+                <div className="user-info">
+                    <div>Client: {this.state.user?.name}</div>
+                    <div>Phone: {this.state.user?.phone}</div>
+                    <div>EGN: {this.state.user?.egn}</div>
+                    <div>Address: {this.state.user?.address}</div>
+                    <div>Created: {this.state.user?.account_creation_date?.slice(0, 10)}</div>
+                    <textarea name="comments" onChange={this.handleComment} placeholder="Comments" cols="50" rows="10" value={this.state.user?.comments} /><br/>
+                    <button onClick={this.saveUser}>SAVE</button><br/>
                     <select onChange={this.selectCar}>
                             <option>Select Car</option>
                             {this.state.user?.cars.map((car, i) => {
                                 return (
                                     <option key={i} value={car.registration_number}>{car.registration_number}</option>
-                                )
-                            })}
+                                    )
+                                })}
                     </select>
                     <button onClick={this.openAddCar}>Add</button>
                     <button onClick={this.deleteCar}>Delete</button>
-                    <Modal
-                        isOpen={this.state.addCarModal}
-                        className="modal"
-                    >   
-                        <form action={`/user/${this.state.user?._id}`} method="PUT">
-                            <h3>Add new car</h3>
-                            <div>
-                                <input type="text" name="registration_number" onChange={this.handleAddCarChange} placeholder="Registration Number" />
-                            </div>
-                            <div>
-                                <input type="text" name="vin" onChange={this.handleAddCarChange} placeholder="VIN" />
-                            </div>
-                            <input type="submit" value="Add" onClick={this.addCar}/>
-                            <button onClick={this.closeAddCar}>X</button>
-                        </form>
-                    </Modal>
-                    <Modal
-                        isOpen={this.state.editCarPaymentModal}
-                        className="modal"
-                    >   
-                        <form action={`/user/${this.state.user?._id}`} method="PUT">
-                            <h3>Edit payment</h3>
-                            <div>
-                                <select name="insuranceType" onClick={this.handleEdit} required>
-                                    <option value="">Insurance Type</option>
-                                    <option value="autocasco">Autocasco</option>
-                                    <option value="tpli">TPLI</option>
-                                </select>
-                            </div>
-                            <div>
-                                <select name="payments" onClick={this.handleEdit} required>
-                                    <option value="">Number of payments</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="12">12</option>
-                                </select>
-                            </div>
-                            <div>
-                                <select name="payment" onClick={this.handleEdit}>
-                                    <option value="">Next payment</option>
-                                    {!this.state.editedPayment?.payments ? null : this.dateForPayment() }
-                                </select>
-                            </div>
-                            <div>
-                                <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleEdit} />
-                            </div>
-                            <div>
-                                <input type="text" onChange={this.handleEdit} placeholder="dd-mm-yyyy" name="startingDate" />
-                            </div>
-                            <input type="submit" value="Edit" onClick={this.editPayment}/>
-                            <button onClick={this.closeEditCarPayment}>X</button>
-                        </form>
-                    </Modal>
-                    
                     {this.state.selectedCar ? ( 
                         <>
-                            <div>Add Payment</div>
+                            <p>Add Payment</p>
                             <button onClick={this.openAddCarPayment}>Add</button>
                         </>
                     ) : ""}
-                    <Modal
-                        isOpen={this.state.addCarPaymentModal}
-                        className="modal"
-                    >   
-                        <form action={`/user/${this.state.user?._id}`} method="PUT">
-                            <h3>Add a new car payment</h3>
-                            <div>
-                                <select name="insuranceType" onClick={this.handleAddNewInsuranceChange} required>
-                                    <option value="">Insurance Type</option>
-                                    <option value="autocasco">Autocasco</option>
-                                    <option value="tpli">TPLI</option>
-                                </select>
-                            </div>
-                            <div>
-                                <select name="payments" onClick={this.handleAddNewInsuranceChange} required>
-                                    <option value="">Number of payments</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="12">12</option>
-                                </select>
-                            </div>
-                            <div>
-                                <select name="payment" onClick={this.handleAddNewInsuranceChange}>
-                                    <option value="">Next payment</option>
-                                    {!this.state.newInsurance?.payments ? null : this.dateForPayment() }
-                                </select>
-                            </div>
-                            <div>
-                                <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
-                            </div>
-                            <div>
-                                <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" required />
-                            </div>
-                            <input type="submit" value="Add" onClick={this.createNewInsurance}/>
-                            <button onClick={this.closeAddCarPayment}>X</button>
-                        </form>
-                    </Modal>
+                    <br/>
                 </div>
+                <Modal
+                    isOpen={this.state.addCarModal}
+                    className="modal"
+                >   
+                    <form action={`/user/${this.state.user?._id}`} method="PUT">
+                        <h3>Add new car</h3>
+                        <div>
+                            <input type="text" name="registration_number" onChange={this.handleAddCarChange} placeholder="Registration Number" />
+                        </div>
+                        <div>
+                            <input type="text" name="vin" onChange={this.handleAddCarChange} placeholder="VIN" />
+                        </div>
+                        <input type="submit" value="Add" onClick={this.addCar}/>
+                        <button onClick={this.closeAddCar}>X</button>
+                    </form>
+                </Modal>
+                <Modal
+                    isOpen={this.state.editCarPaymentModal}
+                    className="modal"
+                >   
+                    <form action={`/user/${this.state.user?._id}`} method="PUT">
+                        <h3>Edit payment</h3>
+                        <div>
+                            <select name="insuranceType" onClick={this.handleEdit} required>
+                                <option value="">Insurance Type</option>
+                                <option value="autocasco">Autocasco</option>
+                                <option value="tpli">TPLI</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select name="payments" onClick={this.handleEdit} required>
+                                <option value="">Number of payments</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select name="payment" onClick={this.handleEdit}>
+                                <option value="">Next payment</option>
+                                {!this.state.editedPayment?.payments ? null : this.dateForPayment() }
+                            </select>
+                        </div>
+                        <div>
+                            <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleEdit} />
+                        </div>
+                        <div>
+                            <input type="text" onChange={this.handleEdit} placeholder="dd-mm-yyyy" name="startingDate" />
+                        </div>
+                        <input type="submit" value="Edit" onClick={this.editPayment}/>
+                        <button onClick={this.closeEditCarPayment}>X</button>
+                    </form>
+                </Modal>
+                <Modal
+                    isOpen={this.state.addCarPaymentModal}
+                    className="modal"
+                >   
+                    <form action={`/user/${this.state.user?._id}`} method="PUT">
+                        <h3>Add a new car payment</h3>
+                        <div>
+                            <select name="insuranceType" onClick={this.handleAddNewInsuranceChange} required>
+                                <option value="">Insurance Type</option>
+                                <option value="autocasco">Autocasco</option>
+                                <option value="tpli">TPLI</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select name="payments" onClick={this.handleAddNewInsuranceChange} required>
+                                <option value="">Number of payments</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select name="payment" onClick={this.handleAddNewInsuranceChange}>
+                                <option value="">Next payment</option>
+                                {!this.state.newInsurance?.payments ? null : this.dateForPayment() }
+                            </select>
+                        </div>
+                        <div>
+                            <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
+                        </div>
+                        <div>
+                            <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" required />
+                        </div>
+                        <input type="submit" value="Add" onClick={this.createNewInsurance}/>
+                        <button onClick={this.closeAddCarPayment}>X</button>
+                    </form>
+                </Modal>
                 <div>
                     {this.state.selectedCar?.payments?.map((el, i) => {
                         return (

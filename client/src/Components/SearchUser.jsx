@@ -52,6 +52,7 @@ class SearchUser extends Component {
                             if (obj[key].toLowerCase().includes(filter[key].toLowerCase())) {
                                 flag = true;
                             }
+                            break;
                         case "phone":
                             if (new RegExp(this.escapeRegExp(filter[key].replace(/\s*/g, ""))).test(obj[key].replace(/\s*/g, ""))) {
                                 flag = true;

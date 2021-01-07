@@ -314,15 +314,14 @@ class UserPanel extends Component {
     }
 
     dateForPayment = () => {
+        var options = [];
         if (this.state.newInsurance?.payments) {
-            var options = [];
-            for (var i = 1; i <= this.state.newInsurance.payments; i ++) {
+            for (let i = 1; i <= this.state.newInsurance.payments; i ++) {
                 options.push(<option value={i} key={i}>{i}</option>)
             }
             return options;
         } else if (this.state.editedPayment?.payments) {
-            var options = [];
-            for (var i = 1; i <= this.state.editedPayment.payments; i ++) {
+            for (let i = 1; i <= this.state.editedPayment.payments; i ++) {
                 options.push(<option value={i} key={i}>{i}</option>)
             }
             return options;

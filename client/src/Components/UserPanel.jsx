@@ -203,8 +203,9 @@ class UserPanel extends Component {
         let year = car.startingDate.slice(6, 10);
         let month = car.startingDate.slice(3, 5);
         let day = car.startingDate.slice(0, 2);
+        let insuranceCode = (/\/(\d{2})\//gi).exec(car.documentNumber);
         let body = {
-            insuranceCode: car.documentNumber ? insuranceCodes[(/\/(\d{2})\//gi).exec(car.documentNumber)[1]] || "" : "",
+            insuranceCode: insuranceCode ? insuranceCodes[insuranceCode[1]] : "",
             paymentType: car.insuranceType,
             documentNumber: car.documentNumber,
             due_dates: {

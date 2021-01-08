@@ -124,6 +124,7 @@ body {
 .payments {
     border: 1px solid black;
     border-collapse: collapse;
+    font-size: 14px;
     margin: 20px auto;
 }
 
@@ -132,6 +133,16 @@ body {
     text-align: center;
     margin: 0;
     padding: 5px;
+}
+
+.payments td button {
+    background: transparent;
+    border: none;
+    font-size: 12px;
+    height: 100%;
+    margin: 0px;
+    width: 100%;
+    outline: none;
 }
 
 .payments th{
@@ -154,16 +165,17 @@ body {
 
 .user-panel-personal-data {
     display: grid;
-    grid-template-columns: 1fr 3fr;
+    grid-template-columns: 1fr 4fr;
 }
 
 .user-panel-personal-data {
-    margin-left: 1rem;
+    margin: 0 1rem;
 }
 
 .user-info div{
     border: 1px solid black;
     border-radius: 5px;
+    font-size: 14px;
     padding: 5px 10px;
     width: 375px;
 }

@@ -7,7 +7,7 @@ class Notifications extends Component {
     }
     
     componentDidMount = () => {
-        fetch("/notifications", {
+        fetch("/api/notifications", {
             method: "GET",
             headers: {
                'Content-Type': 'application/json',

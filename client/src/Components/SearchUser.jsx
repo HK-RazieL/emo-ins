@@ -13,7 +13,7 @@ class SearchUser extends Component {
     }
 
     componentDidMount = () => {
-        fetch("/search-user", {
+        fetch("/api/search-user", {
             method: "GET",
         }).then((res) => {
             return res.json();

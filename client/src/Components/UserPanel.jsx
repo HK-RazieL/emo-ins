@@ -11,7 +11,7 @@ class UserPanel extends Component {
 
     componentDidMount = () => {
         var { id } = this.props.location.state;
-        fetch(`/users/${id}`, {
+        fetch(`/api/users/${id}`, {
             method: "GET",
         }).then((res) => {
             return res.json();
@@ -29,7 +29,7 @@ class UserPanel extends Component {
     componentDidUpdate = (prevProps, prevState) => {
         let { id } = this.props.location.state;
         if (prevState.user?._id !== id) {
-            fetch(`/users/${id}`, {
+            fetch(`/api/users/${id}`, {
                 method: "GET",
             }).then((res) => {
                 return res.json();
@@ -138,7 +138,7 @@ class UserPanel extends Component {
     }
 
     saveUser = () => {
-        fetch(`/users/:${this.state.user._id}`, {
+        fetch(`/api/users/:${this.state.user._id}`, {
             method: "PATCH",
             headers: {
                 'Content-Type': 'application/json',

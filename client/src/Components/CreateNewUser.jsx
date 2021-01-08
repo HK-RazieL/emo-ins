@@ -9,7 +9,7 @@ class CreateNewUser extends Component {
     createNewUser = (event) => {
         event.preventDefault();
         event.stopPropagation();
-        fetch("/create-new-user", {
+        fetch("/api/create-new-user", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

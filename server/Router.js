@@ -4,7 +4,7 @@ const _ = require("lodash");
 const mongoose = require("mongoose");
 
 
-mongoose.connect("mongodb://localhost/users", {
+mongoose.connect("mongodb://localhost/api/users", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -24,7 +24,7 @@ router.get("/", (req, res) => {
     res.send("test")
 });
 
-router.get("/notifications", (req, res) => {
+router.get("/api/notifications", (req, res) => {
     User.find({}, (err, result) => {
         if (err) console.error(err);
 
@@ -63,11 +63,11 @@ router.get("/notifications", (req, res) => {
     })
 });
 
-router.get("/create-new-user", (req, res) => {
+router.get("/api/create-new-user", (req, res) => {
     res.send("404 Not Found");
 });
 
-router.post("/create-new-user", jsonParser, (req, res) => {
+router.post("/api/create-new-user", jsonParser, (req, res) => {
     const user = new User(_.cloneDeep(req.body));
     user.save((err, user) => {
         if (err) return console.error(err);
@@ -76,14 +76,14 @@ router.post("/create-new-user", jsonParser, (req, res) => {
     });
 });
 
-router.get("/search-user", jsonParser, (req, res) => {
+router.get("/api/search-user", jsonParser, (req, res) => {
     User.find({}, (err, users) => {
         if (err) return console.error(err);
         res.send(users);
     });
 });
 
-router.get("/users/:id", jsonParser, (req, res) => {
+router.get("/api/users/:id", jsonParser, (req, res) => {
     User.find({
         _id: req.params.id
     }, (err, user) => {
@@ -92,7 +92,7 @@ router.get("/users/:id", jsonParser, (req, res) => {
     });
 })
 
-router.patch("/users/:id", jsonParser, (req, res) => {
+router.patch("/api/users/:id", jsonParser, (req, res) => {
     User.findByIdAndUpdate({
         _id: req.body._id
     }, {
@@ -103,7 +103,7 @@ router.patch("/users/:id", jsonParser, (req, res) => {
     });
 })
 
-router.delete("/users/:id", jsonParser, (req, res) => {
+router.delete("/api/users/:id", jsonParser, (req, res) => {
     User.remove({
         _id: req.body.id
     }, {useFindAndModify:false}, (err, user) => {

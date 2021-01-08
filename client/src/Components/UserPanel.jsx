@@ -391,7 +391,7 @@ class UserPanel extends Component {
                     isOpen={this.state.addCarModal}
                     className="modal"
                 >   
-                    <form action={`/user/${this.state.user?._id}`} method="PUT">
+                    <form action={`/api/user/${this.state.user?._id}`} method="PUT">
                         <h3>Add new car</h3>
                         <div>
                             <input type="text" name="registration_number" onChange={this.handleAddCarChange} placeholder="Registration Number" />
@@ -407,7 +407,7 @@ class UserPanel extends Component {
                     isOpen={this.state.editCarPaymentModal}
                     className="modal"
                 >   
-                    <form action={`/user/${this.state.user?._id}`} method="PUT">
+                    <form action={`/api/user/${this.state.user?._id}`} method="PUT">
                         <h3>Edit payment</h3>
                         <div>
                             <select name="insuranceType" onClick={this.handleEdit} required>
@@ -446,7 +446,7 @@ class UserPanel extends Component {
                     isOpen={this.state.addCarPaymentModal}
                     className="modal"
                 >   
-                    <form action={`/user/${this.state.user?._id}`} method="PUT">
+                    <form action={`/api/user/${this.state.user?._id}`} method="PUT">
                         <h3>Add a new car payment</h3>
                         <div>
                             <select name="insuranceType" onClick={this.handleAddNewInsuranceChange} required>

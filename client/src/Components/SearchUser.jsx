@@ -116,7 +116,7 @@ class SearchUser extends Component {
         return (
             <div>
                 <h2>Search for User</h2>
-                <form action="/search-user" className="search-user">
+                <form action="/api//search-user" className="search-user">
                     <input type="text" onChange={this.handleChange} name="name" placeholder="Name" />
                     <input type="text" onChange={this.handleChange} name="phone" placeholder="Phone" />
                     <input type="text" onChange={this.handleChange} name="registrationNumber" placeholder="Car Registration Number" />
@@ -124,7 +124,7 @@ class SearchUser extends Component {
                     <input type="text" onChange={this.handleChange} name="documentNumber" placeholder="Document Number" />
                 </form>
                 <div>
-                    <form action={`/users/${this.state.selected}`} className="filtered-users-list">
+                    <form action={`/api/users/${this.state.selected}`} className="filtered-users-list">
                         {this.state.filtered?.length > 0 && (<h4>
                             <div>#</div>
                             <div>Name</div>

@@ -42,7 +42,7 @@ class CreateNewUser extends Component {
         return (
             <div>
                 <h2>Create New User</h2>
-                <form action="/create-new-user" onSubmit={this.createNewUser} className="create-new-user">
+                <form action="/api//create-new-user" onSubmit={this.createNewUser} className="create-new-user">
                     <input type="text" placeholder="Name" autoComplete="off" onChange={this.handleChange} name="name" required />
                     <input type="text" placeholder="EGN" autoComplete="off" onChange={this.handleChange} name="egn" />
                     <input type="text" placeholder="Phone" autoComplete="off" onChange={this.handleChange} name="phone" />

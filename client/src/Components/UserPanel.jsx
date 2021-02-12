@@ -1,33 +1,25 @@
 import React, { Component } from 'react';
 import Modal from "react-modal";
+import CustomModal from "./CustomModal";
 
 Modal.setAppElement("#root")
 class UserPanel extends Component {
     state = {
         addCarModal: false,
-        addCarPaymentModal: false,
+        addInsuranceModal: false,
         editCarPaymentModal: false,
+        insurance: {}
     }
 
     componentDidMount = () => {
-        var { id } = this.props.location.state;
-        fetch(`/users/${id}`, {
-            method: "GET",
-        }).then((res) => {
-            return res.json();
-        }).then((json) => {
-            this.setState({
-                user: json[0],
-            }, () => {
-                if (this.props.location.state.notificationCar) {
-                    this.selectedFromNotification();
-                }
-            });
-        });
+        this.getUser();
     }
 
     componentDidUpdate = (prevProps, prevState) => {
         let { id } = this.props.location.state;
+        if (JSON.stringify(prevState.user) !== JSON.stringify(this.state.user)) {
+            this.getUser();
+        }
         if (prevState.user?._id !== id) {
             fetch(`/users/${id}`, {
                 method: "GET",
@@ -53,6 +45,23 @@ class UserPanel extends Component {
         }
     }
 
+    getUser = () => {
+        var { id } = this.props.location.state;
+        fetch(`/users/${id}`, {
+            method: "GET",
+        }).then((res) => {
+            return res.json();
+        }).then((json) => {
+            this.setState({
+                user: json[0],
+            }, () => {
+                if (this.props.location.state.notificationCar) {
+                    this.selectedFromNotification();
+                }
+            });
+        });
+    }
+
     selectedFromNotification = () => {
         let select = document.querySelector("select");
         let notificationCar = this.props.location.state.notificationCar;
@@ -60,7 +69,6 @@ class UserPanel extends Component {
             if (el.value === notificationCar) {
                 select.value = notificationCar;
                 this.setState({
-                    ...this.state,
                     selectedCar: this.state.user.cars.filter((car) => car.registration_number === notificationCar)[0]
                 });
             }
@@ -70,7 +78,6 @@ class UserPanel extends Component {
 
     handleAddCarChange = (event) => {
         this.setState({
-            ...this.state,
             addNewCar: {
                 ...this.state.addNewCar,
                 [event.target.name]: event.target.value,
@@ -81,7 +88,6 @@ class UserPanel extends Component {
 
     handleComment = (event) => {
         this.setState({
-            ...this.state,
             user: {
                 ...this.state.user,
                 [event.target.name]: event.target.value
@@ -93,7 +99,6 @@ class UserPanel extends Component {
         event.preventDefault();
         event.stopPropagation();
         this.setState({
-            ...this.state,
             user: {
                 ...this.state.user,
                 cars: [...this.state.user.cars, this.state.addNewCar]
@@ -112,29 +117,19 @@ class UserPanel extends Component {
             return el.registration_number === event.target.value;
         });
         this.setState({
-            ...this.state,
             selectedCar: selectedCar[0]
         });
     }
 
-    handleAddNewInsuranceChange = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
+    createNewInsurance = (obj) => {
         this.setState({
-            ...this.state,
-            newInsurance: {
-                ...this.state.newInsurance,
-                [event.target.name]: event.target.value,
-            }
+            newInsurance: obj
+        }, () => {
+            if (!this.state.newInsurance.startingDate) return;
+            this.replacingCar(this.state.newInsurance);
+            this.saveUser();
+            this.getUser();
         });
-    }
-
-    createNewInsurance = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!this.state.newInsurance.startingDate) return;
-        this.replacingCar(this.state.newInsurance);
-
     }
 
     saveUser = () => {
@@ -145,6 +140,7 @@ class UserPanel extends Component {
             },
             body: JSON.stringify(this.state.user)
         });
+        this.forceUpdate();
     }
 
     makePayment = (event) => {
@@ -164,22 +160,20 @@ class UserPanel extends Component {
             payments: [...payments]
         }
         this.setState({
-            ...this.state,
             selectedCar: car
         }, () => {
             this.saveUser();
         });
     }
 
-    handleEdit = (event) => {
-        this.setState({
-            ...this.state,
-            editedPayment: {
-                ...this.state.editedPayment,
-                [event.target.name]: event.target.value
-            }
-        });
-    }
+    // handleEdit = (event) => {
+    //     this.setState({
+    //         editedPayment: {
+    //             ...this.state.editedPayment,
+    //             [event.target.name]: event.target.value
+    //         }
+    //     });
+    // }
 
     replacingCar = (car) => {
         let insuranceCodes = {
@@ -243,7 +237,6 @@ class UserPanel extends Component {
             });
         }
         this.setState({
-            ...this.state,
             user: {
                 ...this.state.user,
                 cars : this.state.user.cars.map((el) => {
@@ -255,8 +248,6 @@ class UserPanel extends Component {
             }
         }, () => {
             this.saveUser();
-            this.closeAddCarPayment();
-            window.location.reload();
         });
     }
 
@@ -273,7 +264,7 @@ class UserPanel extends Component {
         this.replacingCar(this.state.editedPayment);
     }
 
-    deletePayment = (event) => {
+    deleteInsurance = (event) => {
         event.preventDefault();
         event.stopPropagation();
         if (!window.confirm("Are you sure you want to DELETE this payment?")) {
@@ -283,14 +274,12 @@ class UserPanel extends Component {
         let car = cars.filter((car) => car.registration_number === this.state.selectedCar.registration_number)[0];
         car.payments = car.payments.filter((payment) => payment._id !== event.target.getAttribute("payment"));
         this.setState({
-            ...this.state,
             user: {
                 ...this.state.user,
                 cars: [...this.state.user.cars]
-            }
+            },
         }, () => {
             this.saveUser();
-            window.location.reload();
         });
     }
 
@@ -303,7 +292,6 @@ class UserPanel extends Component {
         let cars = this.state.user.cars;
         cars = cars.filter((car) => car.registration_number !== this.state.selectedCar.registration_number);
         this.setState({
-            ...this.state,
             user: {
                 ...this.state.user,
                 cars
@@ -312,22 +300,6 @@ class UserPanel extends Component {
             this.saveUser();
             window.location.reload();
         });
-    }
-
-    dateForPayment = () => {
-        var options = [];
-        if (this.state.newInsurance?.payments) {
-            for (let i = 1; i <= this.state.newInsurance.payments; i ++) {
-                options.push(<option value={i} key={i}>{i}</option>)
-            }
-            return options;
-        } else if (this.state.editedPayment?.payments) {
-            for (let i = 1; i <= this.state.editedPayment.payments; i ++) {
-                options.push(<option value={i} key={i}>{i}</option>)
-            }
-            return options;
-        }
-        return;
     }
     
     openAddCar = () => {
@@ -338,23 +310,22 @@ class UserPanel extends Component {
         this.setState({ addCarModal: false, addNewCar: {} });
     }
 
-    openAddCarPayment = () => {
-        this.setState({ addCarPaymentModal: true});
+    openAddInsuranceModal = () => {
+        this.setState({ addInsuranceModal: true});
     }
 
-    closeAddCarPayment = () => {
-        this.setState({ addCarPaymentModal: false });
+    closeAddInsuranceModal = () => {
+        this.setState({ addInsuranceModal: false });
     }
 
-    openEditCarPayment = (event) => {
+    openEditInsuranceModal = (event) => {
         this.setState({
-            ...this.state,
             editing: event.target.getAttribute("payment"),
             editCarPaymentModal: true
         });
     }
 
-    closeEditCarPayment = () => {
+    closeEditInsuranceModal = () => {
         this.setState({ editCarPaymentModal: false });
     }
 
@@ -382,7 +353,7 @@ class UserPanel extends Component {
                     {this.state.selectedCar ? ( 
                         <>
                             <p>Add Payment</p>
-                            <button onClick={this.openAddCarPayment}>Add</button>
+                            <button onClick={this.openAddInsuranceModal}>Add</button>
                         </>
                     ) : ""}
                     <br/>
@@ -403,10 +374,12 @@ class UserPanel extends Component {
                         <button onClick={this.closeAddCar}>X</button>
                     </form>
                 </Modal>
-                <Modal
-                    isOpen={this.state.editCarPaymentModal}
-                    className="modal"
-                >   
+                <Modal isOpen={this.state.editCarPaymentModal} className="modal">
+                    <CustomModal modal="editInsurance" 
+                        user={this.state.user}
+                        close={this.closeEditInsuranceModal}
+                        create={this.createNewInsurance}
+                    />
                     <form action={`/user/${this.state.user?._id}`} method="PUT">
                         <h3>Edit payment</h3>
                         <div>
@@ -442,44 +415,12 @@ class UserPanel extends Component {
                         <button onClick={this.closeEditCarPayment}>X</button>
                     </form>
                 </Modal>
-                <Modal
-                    isOpen={this.state.addCarPaymentModal}
-                    className="modal"
-                >   
-                    <form action={`/user/${this.state.user?._id}`} method="PUT">
-                        <h3>Add a new car payment</h3>
-                        <div>
-                            <select name="insuranceType" onClick={this.handleAddNewInsuranceChange} required>
-                                <option value="">Insurance Type</option>
-                                <option value="autocasco">Autocasco</option>
-                                <option value="tpli">TPLI</option>
-                            </select>
-                        </div>
-                        <div>
-                            <select name="payments" onClick={this.handleAddNewInsuranceChange} required>
-                                <option value="">Number of payments</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="12">12</option>
-                            </select>
-                        </div>
-                        <div>
-                            <select name="payment" onClick={this.handleAddNewInsuranceChange}>
-                                <option value="">Next payment</option>
-                                {!this.state.newInsurance?.payments ? null : this.dateForPayment() }
-                            </select>
-                        </div>
-                        <div>
-                            <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleAddNewInsuranceChange} />
-                        </div>
-                        <div>
-                            <input type="text" onChange={this.handleAddNewInsuranceChange} placeholder="dd-mm-yyyy" name="startingDate" required />
-                        </div>
-                        <input type="submit" value="Add" onClick={this.createNewInsurance}/>
-                        <button onClick={this.closeAddCarPayment}>X</button>
-                    </form>
+                <Modal isOpen={this.state.addInsuranceModal} className="modal">
+                    <CustomModal modal="addInsurance" 
+                        user={this.state.user}
+                        close={this.closeAddInsuranceModal}
+                        create={this.createNewInsurance}
+                    />
                 </Modal>
                 <div>
                     {this.state.selectedCar?.payments?.map((el, i) => {
@@ -491,7 +432,7 @@ class UserPanel extends Component {
                                             <th colSpan={el.due_dates.paid.length}>
                                                 <span>{el.insuranceCode} / {el.paymentType} / ({el.documentNumber})</span>
                                                 <button onClick={this.openEditCarPayment} payment={el._id}>Edit</button>
-                                                <button onClick={this.deletePayment} payment={el._id}>Delete</button>
+                                                <button onClick={this.deleteInsurance} payment={el._id}>Delete</button>
                                             </th>
                                         </tr>
                                     </thead>

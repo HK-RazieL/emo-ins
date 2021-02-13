@@ -166,15 +166,6 @@ class UserPanel extends Component {
         });
     }
 
-    // handleEdit = (event) => {
-    //     this.setState({
-    //         editedPayment: {
-    //             ...this.state.editedPayment,
-    //             [event.target.name]: event.target.value
-    //         }
-    //     });
-    // }
-
     replacingCar = (car) => {
         let insuranceCodes = {
             "01": "Aliance Bulgaria",
@@ -380,40 +371,6 @@ class UserPanel extends Component {
                         close={this.closeEditInsuranceModal}
                         create={this.createNewInsurance}
                     />
-                    <form action={`/user/${this.state.user?._id}`} method="PUT">
-                        <h3>Edit payment</h3>
-                        <div>
-                            <select name="insuranceType" onClick={this.handleEdit} required>
-                                <option value="">Insurance Type</option>
-                                <option value="autocasco">Autocasco</option>
-                                <option value="tpli">TPLI</option>
-                            </select>
-                        </div>
-                        <div>
-                            <select name="payments" onClick={this.handleEdit} required>
-                                <option value="">Number of payments</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="12">12</option>
-                            </select>
-                        </div>
-                        <div>
-                            <select name="payment" onClick={this.handleEdit}>
-                                <option value="">Next payment</option>
-                                {!this.state.editedPayment?.payments ? null : this.dateForPayment() }
-                            </select>
-                        </div>
-                        <div>
-                            <input type="text" name="documentNumber" placeholder="Document Number" onChange={this.handleEdit} />
-                        </div>
-                        <div>
-                            <input type="text" onChange={this.handleEdit} placeholder="dd-mm-yyyy" name="startingDate" />
-                        </div>
-                        <input type="submit" value="Edit" onClick={this.editPayment}/>
-                        <button onClick={this.closeEditCarPayment}>X</button>
-                    </form>
                 </Modal>
                 <Modal isOpen={this.state.addInsuranceModal} className="modal">
                     <CustomModal modal="addInsurance" 
@@ -431,7 +388,7 @@ class UserPanel extends Component {
                                         <tr>
                                             <th colSpan={el.due_dates.paid.length}>
                                                 <span>{el.insuranceCode} / {el.paymentType} / ({el.documentNumber})</span>
-                                                <button onClick={this.openEditCarPayment} payment={el._id}>Edit</button>
+                                                <button onClick={this.openEditInsuranceModal} payment={el._id}>Edit</button>
                                                 <button onClick={this.deleteInsurance} payment={el._id}>Delete</button>
                                             </th>
                                         </tr>

@@ -19,7 +19,6 @@ class SearchUser extends Component {
             return res.json();
         }).then((json) => {
             this.setState({
-                ...this.state,
                 users: json
             })
         })
@@ -27,7 +26,6 @@ class SearchUser extends Component {
 
     handleChange = (event) => {
         this.setState({
-            ...this.state,
             filter: {
                 ...this.state.filter,
                 [event.target.name]: event.target.value
@@ -101,7 +99,6 @@ class SearchUser extends Component {
             sum += filter[key].length;
         }
         this.setState({
-            ...this.state,
             filtered: sum === 0 ? [] : result
         });
     }

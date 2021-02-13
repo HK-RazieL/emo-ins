@@ -19,7 +19,6 @@ class CreateNewUser extends Component {
             return res.status
         }).then((json) => {
             this.setState({
-                ...this.state,
                 requestStatus: json
             }, () => {
                 if(this.state.requestStatus <= 300) {

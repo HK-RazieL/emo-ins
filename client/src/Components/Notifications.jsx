@@ -7,20 +7,23 @@ class Notifications extends Component {
     }
     
     componentDidMount = () => {
+        this.getUsers();
+    }
+
+    getUsers = () => {
         fetch("/notifications", {
             method: "GET",
             headers: {
-               'Content-Type': 'application/json',
-           }
+                'Content-Type': 'application/json',
+            }
         }).then((res) => {
             return res.json();
         }).then((json) => {
             this.setState({
-                ...this.state,
                 users: json
             });
         });
-   }
+    }
    
     render() {
         return (
